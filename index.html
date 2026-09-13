@@ -127,30 +127,30 @@
   .task-title{font-family:'Playfair Display', serif;font-size:1.4rem;color:var(--green);margin-bottom:0.2rem;z-index:2;}
   .task-desc{font-style:italic;color:var(--ink-light);max-width:340px;margin-bottom:1.2rem;z-index:2;font-size:0.95rem;}
 
-  /* FASE QUEBRA-CABEÇA */
-  .puzzle-container{display:flex;flex-direction:column;align-items:center;gap:15px;z-index:2;}
+  /* FASE QUEBRA-CABEÇA 16 PEÇAS (4x4) */
+  .puzzle-container{display:flex;flex-direction:column;align-items:center;gap:12px;z-index:2;}
   .puzzle-board{
-    display:grid;grid-template-columns:repeat(3,80px);grid-template-rows:repeat(3,80px);
+    display:grid;grid-template-columns:repeat(4,60px);grid-template-rows:repeat(4,60px);
     gap:2px;background:var(--gold-dark);padding:3px;border-radius:6px;
     box-shadow:0 4px 10px rgba(0,0,0,0.15);
   }
   .puzzle-slot{
-    width:80px;height:80px;background:var(--paper);border:1px dashed #d8cfb6;
+    width:60px;height:60px;background:var(--paper);border:1px dashed #d8cfb6;
     display:flex;align-items:center;justify-content:center;overflow:hidden;
     transition:background-color 0.2s ease;
   }
   .puzzle-slot.drag-over{background:#e7f0e2;border-color:var(--green);}
   .puzzle-pieces{
-    display:flex;flex-wrap:wrap;justify-content:center;gap:8px;max-width:300px;
+    display:flex;flex-wrap:wrap;justify-content:center;gap:6px;max-width:300px;
     min-height:90px;padding:8px;background:var(--paper);border-radius:8px;border:1px solid #e2d9c2;
   }
   .puzzle-piece{
-    width:76px;height:76px;background-size:240px 240px;border:2px solid #fff;
-    border-radius:4px;cursor:grab;box-shadow:0 2px 5px rgba(0,0,0,0.2);
+    width:56px;height:56px;background-size:240px 240px;border:1px solid #fff;
+    border-radius:3px;cursor:grab;box-shadow:0 2px 4px rgba(0,0,0,0.2);
     touch-action:none;user-select:none;
   }
   .puzzle-piece:active{cursor:grabbing;}
-  .puzzle-slot .puzzle-piece{width:80px;height:80px;border:none;border-radius:0;box-shadow:none;cursor:default;}
+  .puzzle-slot .puzzle-piece{width:60px;height:60px;border:none;border-radius:0;box-shadow:none;cursor:default;}
   
   /* JOGO DAS ALIANÇAS */
   .ring-grid{display:grid;grid-template-columns:repeat(3,72px);gap:14px;z-index:2;margin-bottom:1rem;}
@@ -289,7 +289,7 @@
   <button class="skip-btn-dev" onclick="goToStage('stage-puzzle'); initPuzzleGame();">⚡ Pular Envelope (Modo Teste)</button>
 </section>
 
-<!-- FASE 1: QUEBRA-CABEÇA -->
+<!-- FASE 1: QUEBRA-CABEÇA (16 PEÇAS) -->
 <section class="stage bg-cream" id="stage-puzzle">
   <svg class="corner tl" viewBox="0 0 200 200"></svg>
   <div class="header-bar">
@@ -300,7 +300,7 @@
     </div>
     <button class="skip-btn-dev" onclick="goToStage('stage-1'); initRingGame();">⏭️ Avançar Fase (Teste)</button>
   </div>
-  <div class="task-title">Monte a Foto do Pedido</div>
+  <div class="task-title">Monte a Foto do Pedido (16 Peças)</div>
   <div class="task-desc">Arraste e solte cada peça no local correto do quadro. Se errar a posição, soma +R$ 100!</div>
   
   <div class="puzzle-container">
@@ -426,7 +426,7 @@
   <div class="monogram">M &amp; G</div>
   
   <div class="paper-card">
-    <div class="final-price-box">Valor do presente ficou em: R$ <span class="gift-price">1000</span>,00 🎁</div>
+    <div class="final-price-box">Sua pontuação final no presente: R$ <span class="gift-price">1000</span>,00 🎁</div>
     <p>Você desbloqueou o convite! Deus, em Sua infinita bondade, nos concedeu a graça de viver este grande amor — e agora vamos dar um dos passos mais importantes da nossa caminhada: receber o Sacramento do Matrimônio.</p>
     <p>Como moramos longe, queremos abrir esse convite com você numa videochamada, prometido?</p>
   </div>
@@ -514,7 +514,7 @@ function openEnvelope(){
 envelope.addEventListener('click', openEnvelope);
 envelope.addEventListener('keydown', function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); openEnvelope(); } });
 
-// FASE 1: QUEBRA-CABEÇA (Apenas Arrastar e Soltar + Suporte para Telas Touch)
+// FASE 1: QUEBRA-CABEÇA (16 Peças em Grid 4x4)
 const puzzleImg = 'foto_quebra_cabeca.jpeg';
 let filledPuzzleSlots = 0;
 let draggedPiece = null;
@@ -528,13 +528,13 @@ function initPuzzleGame(){
   feedback.textContent = '';
   filledPuzzleSlots = 0;
 
-  // Criar 9 slots no tabuleiro
-  for(let i=0; i<9; i++){
+  // Criar 16 slots no tabuleiro (4x4)
+  for(let i=0; i<16; i++){
     const slot = document.createElement('div');
     slot.className = 'puzzle-slot';
     slot.dataset.index = i;
     
-    // Eventos Drag & Drop nativos (Desktop)
+    // Drag & Drop nativo (Desktop)
     slot.ondragover = (e) => { e.preventDefault(); slot.classList.add('drag-over'); };
     slot.ondragleave = () => slot.classList.remove('drag-over');
     slot.ondrop = (e) => {
@@ -546,12 +546,12 @@ function initPuzzleGame(){
     board.appendChild(slot);
   }
 
-  // Apenas as 9 peças corretas
+  // 16 Peças (4 linhas x 4 colunas de 60px cada, totalizando 240px x 240px)
   let piecesData = [];
-  for(let i=0; i<9; i++){
-    const row = Math.floor(i / 3);
-    const col = i % 3;
-    piecesData.push({ id: i, bgX: -col * 80, bgY: -row * 80 });
+  for(let i=0; i<16; i++){
+    const row = Math.floor(i / 4);
+    const col = i % 4;
+    piecesData.push({ id: i, bgX: -col * 60, bgY: -row * 60 });
   }
 
   // Embaralhar as peças
@@ -565,13 +565,13 @@ function initPuzzleGame(){
     piece.style.backgroundPosition = `${p.bgX}px ${p.bgY}px`;
     piece.dataset.id = p.id;
 
-    // Início do Arraste (Desktop)
+    // Arraste no Desktop
     piece.ondragstart = (e) => {
       draggedPiece = piece;
       e.dataTransfer.setData('text/plain', p.id);
     };
 
-    // Suporte para Touch (Celulares/Tablets)
+    // Arraste em Telas Touch (Celulares/Tablets)
     piece.ontouchstart = (e) => {
       draggedPiece = piece;
       piece.style.opacity = '0.6';
@@ -582,8 +582,8 @@ function initPuzzleGame(){
       const touch = e.touches[0];
       piece.style.position = 'fixed';
       piece.style.zIndex = '1000';
-      piece.style.left = (touch.clientX - 40) + 'px';
-      piece.style.top = (touch.clientY - 40) + 'px';
+      piece.style.left = (touch.clientX - 30) + 'px';
+      piece.style.top = (touch.clientY - 30) + 'px';
     };
 
     piece.ontouchend = (e) => {
@@ -622,7 +622,7 @@ function handlePieceDrop(piece, slot){
     draggedPiece = null;
     filledPuzzleSlots++;
 
-    if(filledPuzzleSlots === 9){
+    if(filledPuzzleSlots === 16){
       document.getElementById('puzzle-feedback').textContent = 'Foto completa! Indo pra fase 2...';
       setTimeout(() => { goToStage('stage-1'); initRingGame(); }, 1200);
     }
