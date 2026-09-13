@@ -187,7 +187,7 @@
     opacity:0.65;transition:opacity 0.2s ease, transform 0.1s ease;
     display:flex;align-items:center;justify-content:center;
   }
-  .genius-btn:active, .genius-btn.lit{opacity:1;transform:scale(0.96);}
+  .genius-btn:active, .genius-btn.lit{opacity:1;transform:scale(0.96);box-shadow: 0 0 15px rgba(255,255,255,0.8);}
   .genius-btn svg{width:36px;height:36px;color:#fff;}
   .g-red{background:var(--rose);}
   .g-blue{background:var(--blue);}
@@ -348,7 +348,7 @@
   <svg class="corner br" viewBox="0 0 200 200"></svg>
 </section>
 
-<!-- FASE 4: GENIUS / SEQUÊNCIA -->
+<!-- FASE 4: GENIUS / SEQUÊNCIA MUSICAL (MAIS DIFÍCIL) -->
 <section class="stage bg-cream" id="stage-3">
   <svg class="corner tl" viewBox="0 0 200 200"></svg>
   <div class="header-bar">
@@ -359,16 +359,16 @@
     </div>
     <button class="skip-btn-dev" onclick="goToStage('stage-4'); initWordSearch();">⏭️ Avançar Fase (Teste)</button>
   </div>
-  <div class="task-title">harmonia do casal</div>
-  <div class="task-desc">memorize e repita a sequência das 4 cores iluminadas.</div>
+  <div class="task-title">harmonia musical do casal</div>
+  <div class="task-desc">Escute as notas e memorize a sequência de 5 sons!</div>
   <div class="genius-grid">
     <button class="genius-btn g-red" data-color="0"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-7-4.35-9.5-8.5C.5 8.5 3 5 6.5 5c2 0 3.3 1 4 2 .7-1 2-2 4-2 3.5 0 6 3.5 4 7.5C19 16.65 12 21 12 21z"/></svg></button>
     <button class="genius-btn g-blue" data-color="1"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.5 6.5L21 9l-5 4.5L17.5 21 12 17l-5.5 4L8 13.5 3 9l6.5-.5z"/></svg></button>
     <button class="genius-btn g-yellow" data-color="2"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="8"/></svg></button>
     <button class="genius-btn g-green" data-color="3"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3v18M3 12h18"/></svg></button>
   </div>
-  <div class="feedback" id="genius-feedback">Aperte para reproduzir</div>
-  <button class="continue-btn" id="genius-start-btn" style="display:inline-block; margin-top:0.5rem;" onclick="playGeniusSequence()">Iniciar Sequência</button>
+  <div class="feedback" id="genius-feedback">Clique para ouvir a melodia</div>
+  <button class="continue-btn" id="genius-start-btn" style="display:inline-block; margin-top:0.5rem;" onclick="playGeniusSequence()">Ouvir Sequência 🎵</button>
   <svg class="corner br" viewBox="0 0 200 200"></svg>
 </section>
 
@@ -528,13 +528,11 @@ function initPuzzleGame(){
   feedback.textContent = '';
   filledPuzzleSlots = 0;
 
-  // Criar 16 slots no tabuleiro (4x4)
   for(let i=0; i<16; i++){
     const slot = document.createElement('div');
     slot.className = 'puzzle-slot';
     slot.dataset.index = i;
     
-    // Drag & Drop nativo (Desktop)
     slot.ondragover = (e) => { e.preventDefault(); slot.classList.add('drag-over'); };
     slot.ondragleave = () => slot.classList.remove('drag-over');
     slot.ondrop = (e) => {
@@ -546,7 +544,6 @@ function initPuzzleGame(){
     board.appendChild(slot);
   }
 
-  // 16 Peças (4 linhas x 4 colunas de 60px cada, totalizando 240px x 240px)
   let piecesData = [];
   for(let i=0; i<16; i++){
     const row = Math.floor(i / 4);
@@ -554,7 +551,6 @@ function initPuzzleGame(){
     piecesData.push({ id: i, bgX: -col * 60, bgY: -row * 60 });
   }
 
-  // Embaralhar as peças
   piecesData.sort(() => Math.random() - 0.5);
 
   piecesData.forEach(p => {
@@ -565,13 +561,11 @@ function initPuzzleGame(){
     piece.style.backgroundPosition = `${p.bgX}px ${p.bgY}px`;
     piece.dataset.id = p.id;
 
-    // Arraste no Desktop
     piece.ondragstart = (e) => {
       draggedPiece = piece;
       e.dataTransfer.setData('text/plain', p.id);
     };
 
-    // Arraste em Telas Touch (Celulares/Tablets)
     piece.ontouchstart = (e) => {
       draggedPiece = piece;
       piece.style.opacity = '0.6';
@@ -613,7 +607,6 @@ function handlePieceDrop(piece, slot){
   const pieceId = piece.dataset.id;
 
   if(parseInt(pieceId) === parseInt(targetIdx)){
-    // Posição correta
     piece.draggable = false;
     piece.ontouchstart = null;
     piece.ontouchmove = null;
@@ -627,7 +620,6 @@ function handlePieceDrop(piece, slot){
       setTimeout(() => { goToStage('stage-1'); initRingGame(); }, 1200);
     }
   } else {
-    // Posição errada
     registerMistake();
     document.getElementById('puzzle-feedback').textContent = 'Lugar errado! (+R$ 100 no presente)';
     draggedPiece = null;
@@ -723,16 +715,47 @@ function initMemoryGame(){
   });
 }
 
-// FASE 4: JOGO GENIUS
+// SINTETIZADOR DE ÁUDIO WEB (SEM ARQUIVOS EXTERNOS)
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+const noteFrequencies = [261.63, 329.63, 392.00, 493.88]; // Dó, Mi, Sol, Si (Teclado)
+
+function playAudioTone(colorIndex) {
+  if (audioCtx.state === 'suspended') {
+    audioCtx.resume();
+  }
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  
+  osc.type = 'triangle'; // Som suave estilo teclado musical
+  osc.frequency.setValueAtTime(noteFrequencies[colorIndex], audioCtx.currentTime);
+  
+  gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.5);
+  
+  osc.connect(gain);
+  gain.connect(audioCtx.destination);
+  
+  osc.start();
+  osc.stop(audioCtx.currentTime + 0.5);
+}
+
+// FASE 4: JOGO GENIUS (Sintetizador Musical + Sequência Mais Difícil: 5 Notas)
 let geniusSequence = [];
 let geniusPlayerStep = 0;
 let geniusCanPlay = false;
 
 function initGeniusGame(){
-  geniusSequence = [Math.floor(Math.random()*4), Math.floor(Math.random()*4), Math.floor(Math.random()*4)];
+  // Gera 5 notas aleatórias para aumentar a dificuldade
+  geniusSequence = [
+    Math.floor(Math.random()*4), 
+    Math.floor(Math.random()*4), 
+    Math.floor(Math.random()*4),
+    Math.floor(Math.random()*4),
+    Math.floor(Math.random()*4)
+  ];
   geniusPlayerStep = 0;
   geniusCanPlay = false;
-  document.getElementById('genius-feedback').textContent = 'Clique em "Iniciar Sequência"';
+  document.getElementById('genius-feedback').textContent = 'Clique em "Ouvir Sequência 🎵"';
   document.getElementById('genius-start-btn').style.display = 'inline-block';
   
   document.querySelectorAll('.genius-btn').forEach(btn => {
@@ -744,13 +767,13 @@ function initGeniusGame(){
         geniusPlayerStep++;
         if(geniusPlayerStep === geniusSequence.length){
           geniusCanPlay = false;
-          document.getElementById('genius-feedback').textContent = 'Perfeito! Indo pra fase 5...';
-          setTimeout(() => { goToStage('stage-4'); initWordSearch(); }, 1100);
+          document.getElementById('genius-feedback').textContent = 'Perfeito! Melodia dominada. Indo pra fase 5...';
+          setTimeout(() => { goToStage('stage-4'); initWordSearch(); }, 1200);
         }
       } else {
         geniusCanPlay = false;
         registerMistake();
-        document.getElementById('genius-feedback').textContent = 'Sequência errada (+R$ 100)! Tente novamente.';
+        document.getElementById('genius-feedback').textContent = 'Nota errada (+R$ 100)! Preste atenção no som.';
         document.getElementById('genius-start-btn').style.display = 'inline-block';
       }
     };
@@ -760,12 +783,13 @@ function initGeniusGame(){
 function lightGeniusBtn(index){
   const btns = document.querySelectorAll('.genius-btn');
   btns[index].classList.add('lit');
+  playAudioTone(index); // Toca o som da nota ao acender/clicar
   setTimeout(() => btns[index].classList.remove('lit'), 350);
 }
 
 function playGeniusSequence(){
   document.getElementById('genius-start-btn').style.display = 'none';
-  document.getElementById('genius-feedback').textContent = 'Preste atenção na sequência...';
+  document.getElementById('genius-feedback').textContent = 'Escute a melodia atentamente...';
   geniusPlayerStep = 0;
   geniusCanPlay = false;
   
@@ -775,10 +799,10 @@ function playGeniusSequence(){
       if(i === geniusSequence.length - 1){
         setTimeout(() => {
           geniusCanPlay = true;
-          document.getElementById('genius-feedback').textContent = 'Sua vez! Repita a sequência.';
+          document.getElementById('genius-feedback').textContent = 'Sua vez! Toque a mesma melodia.';
         }, 500);
       }
-    }, (i + 1) * 600);
+    }, (i + 1) * 550);
   });
 }
 
