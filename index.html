@@ -193,10 +193,9 @@
     font-family:'Playfair Display', serif;font-weight:700;font-size:clamp(0.9rem,4vw,1.1rem);
     color:var(--green);cursor:pointer;transition:background 0.15s ease;
   }
-  .word-cell.anchor{background:var(--gold-light);border-color:var(--gold-dark);}
   .word-cell.selected{background:var(--gold);color:#fff;border-color:var(--gold-dark);}
   .word-cell.found-cell{background:var(--green);color:var(--cream);border-color:var(--green-deep);}
-  .word-cell.bad{background:#f6dede;border-color:var(--danger);}
+  .word-cell.found-cell.selected{background:var(--gold);color:#fff;border-color:var(--gold-dark);}
 
   .reveal-question{
     display:none;font-family:'Mrs Saint Delafield', cursive;
@@ -343,7 +342,7 @@
     <button class="skip-btn-dev" onclick="finishWordSearch()">⏭️ pular fase (teste)</button>
   </div>
   <div class="task-title">A grande pergunta</div>
-  <div class="task-desc" id="words-desc">Ache as palavras escondidas para descobrir a nossa pergunta. Arraste o dedo sobre a palavra (ou toque na primeira e na última letra).</div>
+  <div class="task-desc" id="words-desc">Ache as palavras escondidas para descobrir a nossa pergunta. Toque nas letras uma a uma (ou arraste o dedo sobre a palavra).</div>
   <div class="phrase" id="phrase"></div>
   <div class="word-grid" id="word-grid"></div>
   <div class="reveal-question" id="reveal-question">Vocês aceitam ser nossos padrinhos?</div>
@@ -674,7 +673,7 @@ function renderPhrase(){
 }
 
 let selStart = null;     // célula onde o dedo encostou
-let anchor = null;       // primeira letra escolhida no modo "toque"
+let tapSel = [];         // letras escolhidas uma a uma (modo toque)
 let selecting = false;
 let moved = false;
 
@@ -692,18 +691,61 @@ function lineCells(a, b){
   for(let i=0;i<=len;i++) cells.push(grid.children[(r1+dr*i)*GRID_SIZE + (c1+dc*i)]);
   return cells;
 }
-function clearSelection(){
-  document.querySelectorAll('.word-cell.selected, .word-cell.anchor').forEach(c => c.classList.remove('selected','anchor'));
-}
 function highlight(cells){
   document.querySelectorAll('.word-cell.selected').forEach(c => c.classList.remove('selected'));
   if(cells) cells.forEach(c => c.classList.add('selected'));
+}
+const lettersOf = cells => cells.map(c => c.textContent).join('');
+const remainingWords = () => PHRASE.filter(p => !foundWords.includes(p.word)).map(p => p.word);
+// as letras precisam estar coladas, em linha reta, sempre na mesma direção
+function isStraight(cells){
+  if(cells.length < 2) return true;
+  const dr = +cells[1].dataset.r - +cells[0].dataset.r;
+  const dc = +cells[1].dataset.c - +cells[0].dataset.c;
+  if(Math.abs(dr) > 1 || Math.abs(dc) > 1) return false;
+  for(let i=2;i<cells.length;i++){
+    if(+cells[i].dataset.r - +cells[i-1].dataset.r !== dr || +cells[i].dataset.c - +cells[i-1].dataset.c !== dc) return false;
+  }
+  return true;
+}
+
+function markFound(word, cells){
+  const p = PHRASE.find(x => x.word === word);
+  foundWords.push(word);
+  cells.forEach(c => { c.classList.remove('selected'); c.classList.add('found-cell'); });
+  tapSel = [];
+  renderPhrase();
+  document.getElementById('word-feedback').textContent = `"${p.label}" encontrada!`;
+  if(foundWords.length === PHRASE.length) finishWordSearch();
+}
+
+// Toque letra por letra: vai montando a palavra conforme clica
+function handleTap(cell){
+  const feedback = document.getElementById('word-feedback');
+  // tocar de novo na última letra desfaz ela
+  if(tapSel.length && tapSel[tapSel.length-1] === cell){
+    tapSel.pop(); highlight(tapSel); feedback.textContent = ''; return;
+  }
+  const candidate = tapSel.includes(cell) ? [cell] : tapSel.concat(cell);
+  const text = lettersOf(candidate);
+  const words = remainingWords();
+  if(isStraight(candidate) && words.some(w => w.startsWith(text))){
+    tapSel = candidate;
+  } else {
+    // não continua nenhuma palavra: recomeça a partir dessa letra, sem penalidade
+    tapSel = [cell];
+  }
+  highlight(tapSel);
+  const word = lettersOf(tapSel);
+  if(tapSel.length > 1 && words.includes(word)){ markFound(word, tapSel); return; }
+  feedback.textContent = tapSel.length > 1 ? lettersOf(tapSel) + '...' : '';
 }
 
 function initWordSearch(){
   foundWords = [];
   wordsDone = false;
-  selStart = anchor = null;
+  selStart = null;
+  tapSel = [];
   buildWordMatrix();
   renderPhrase();
   document.getElementById('word-feedback').textContent = '';
@@ -728,60 +770,31 @@ function initWordSearch(){
     if(!cell) return;
     e.preventDefault();
     selecting = true; moved = false; selStart = cell;
-    if(!anchor) highlight([cell]);
   };
   grid.onpointermove = e => {
     if(!selecting) return;
     const cell = cellAt(e.clientX, e.clientY);
-    if(!cell || cell === selStart && !moved) return;
+    if(!cell || (cell === selStart && !moved)) return;
     moved = true;
-    if(anchor){ anchor.classList.remove('anchor'); anchor = null; }
+    tapSel = [];
     highlight(lineCells(selStart, cell) || [selStart]);
   };
-  const finish = e => {
+  grid.onpointerup = e => {
     if(!selecting) return;
     selecting = false;
     const cell = cellAt(e.clientX, e.clientY) || selStart;
-    if(!moved){
-      // modo toque: 1º toque marca a primeira letra, 2º toque a última
-      if(!anchor){ anchor = cell; highlight([]); cell.classList.add('anchor'); return; }
-      if(anchor === cell){ clearSelection(); anchor = null; return; }
-      const cells = lineCells(anchor, cell);
-      anchor.classList.remove('anchor'); anchor = null;
-      checkSelection(cells);
-      return;
-    }
-    checkSelection(lineCells(selStart, cell));
+    if(!moved){ handleTap(cell); return; }
+    // arrastou o dedo: confere a palavra inteira
+    const cells = lineCells(selStart, cell);
+    const words = remainingWords();
+    const text = cells ? lettersOf(cells) : '';
+    const rev = [...text].reverse().join('');
+    const hit = words.find(w => w === text || w === rev);
+    if(hit){ markFound(hit, cells); return; }
+    highlight([]);
+    document.getElementById('word-feedback').textContent = 'Hmm, não é essa. Tenta de novo!';
   };
-  grid.onpointerup = finish;
-  grid.onpointercancel = () => { selecting = false; clearSelection(); };
-}
-
-function checkSelection(cells){
-  const feedback = document.getElementById('word-feedback');
-  if(!cells || cells.length < 2){
-    clearSelection();
-    feedback.textContent = 'As palavras ficam em linha reta (horizontal, vertical ou diagonal).';
-    return;
-  }
-  const text = cells.map(c => c.textContent).join('');
-  const rev = [...text].reverse().join('');
-  const hit = PHRASE.find(p => !foundWords.includes(p.word) && (p.word === text || p.word === rev));
-  if(hit){
-    foundWords.push(hit.word);
-    cells.forEach(c => { c.classList.remove('selected'); c.classList.add('found-cell'); });
-    renderPhrase();
-    feedback.textContent = `"${hit.label}" encontrada!`;
-    if(foundWords.length === PHRASE.length) finishWordSearch();
-  } else if(PHRASE.some(p => p.word === text || p.word === rev)){
-    clearSelection();
-    feedback.textContent = 'Essa vocês já acharam!';
-  } else {
-    cells.forEach(c => c.classList.add('bad'));
-    registerMistake();
-    feedback.textContent = 'Não é essa palavra (+R$ 100 no presente)';
-    setTimeout(() => cells.forEach(c => c.classList.remove('bad','selected')), 500);
-  }
+  grid.onpointercancel = () => { selecting = false; highlight(tapSel); };
 }
 
 function finishWordSearch(){
