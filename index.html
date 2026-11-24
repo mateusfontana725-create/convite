@@ -267,8 +267,6 @@
   .detail-addr{font-style:italic;font-size:1rem;color:var(--ink-light);margin:0;}
   .tap-label{font-family:'Playfair Display', serif;text-transform:uppercase;letter-spacing:1px;font-size:0.75rem;color:var(--gold-dark);margin-bottom:0.4rem;font-weight:600;}
   .closing-title{font-family:'Mrs Saint Delafield', cursive;font-size:clamp(2.4rem,8vw,3.2rem);color:var(--gold-light);margin:2rem 0 1.2rem;z-index:2;}
-  .wpp-btn{font-family:'Playfair Display', serif;font-size:1rem;letter-spacing:1px;text-transform:uppercase;background:var(--gold);color:var(--green-deep);font-weight:700;border:none;padding:1rem 2.2rem;border-radius:30px;cursor:pointer;z-index:2;box-shadow:0 6px 18px rgba(0,0,0,0.2);text-decoration:none;display:inline-block;}
-  .wpp-btn:hover{background:var(--gold-light);}
   .video-note{margin-top:2rem;max-width:340px;font-style:italic;font-size:1rem;line-height:1.5;color:rgba(255,255,255,0.85);z-index:2;}
 </style>
 </head>
@@ -418,14 +416,12 @@
     </a>
 
     <div class="closing-title">Obrigado por dizerem sim!</div>
-    <a class="wpp-btn" id="wpp-btn" href="#" target="_blank" rel="noopener">avisar os noivos no WhatsApp</a>
-    <div class="video-note">P.S. bora marcar uma videochamada pra comemorar esse sim, mesmo de longe? 💚</div>
+    <div class="video-note">Que alegria viver esse momento com vocês, mesmo que pela tela. 💚</div>
   </div>
 </section>
 
 <script>
 // ===== CONFIGURAÇÃO =====
-const WHATSAPP_PHONE = "5543999999999"; // número dos noivos (com DDI + DDD, só números)
 const START_PRICE = 1000;
 const MISTAKE_PRICE = 100;
 const FINAL_PRICE = 3000;
@@ -884,8 +880,6 @@ document.getElementById('yes-btn').addEventListener('click', function(){
   document.getElementById('answer-msg').textContent = 'Que alegria!! Vocês não fazem ideia do quanto isso significa pra gente. 💚';
   document.getElementById('after-yes').classList.add('show');
   launchConfetti(); setTimeout(launchConfetti, 600);
-  const message = encodeURIComponent(`Mateus e Gabrielle, ACEITAMOS ser padrinhos de vocês! 💍 (e o presente ficou em R$ ${fmt(currentGiftPrice)},00 😂)`);
-  document.getElementById('wpp-btn').href = `https://wa.me/${WHATSAPP_PHONE}?text=${message}`;
 });
 
 // ===== CONFETE =====
