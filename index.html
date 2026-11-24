@@ -697,18 +697,6 @@ function highlight(cells){
 }
 const lettersOf = cells => cells.map(c => c.textContent).join('');
 const remainingWords = () => PHRASE.filter(p => !foundWords.includes(p.word)).map(p => p.word);
-// as letras precisam estar coladas, em linha reta, sempre na mesma direção
-function isStraight(cells){
-  if(cells.length < 2) return true;
-  const dr = +cells[1].dataset.r - +cells[0].dataset.r;
-  const dc = +cells[1].dataset.c - +cells[0].dataset.c;
-  if(Math.abs(dr) > 1 || Math.abs(dc) > 1) return false;
-  for(let i=2;i<cells.length;i++){
-    if(+cells[i].dataset.r - +cells[i-1].dataset.r !== dr || +cells[i].dataset.c - +cells[i-1].dataset.c !== dc) return false;
-  }
-  return true;
-}
-
 function markFound(word, cells){
   const p = PHRASE.find(x => x.word === word);
   foundWords.push(word);
@@ -720,25 +708,34 @@ function markFound(word, cells){
 }
 
 // Toque letra por letra: vai montando a palavra conforme clica
+// células de cada palavra no tabuleiro
+function wordCells(word){
+  const p = PLACEMENTS[word], grid = document.getElementById('word-grid');
+  return [...word].map((_, i) => grid.children[(p.r + p.d[0]*i)*GRID_SIZE + (p.c + p.d[1]*i)]);
+}
+
+// Toque letra por letra: vai montando a palavra conforme clica.
+// Letras que já são de outra palavra encontrada (verdes) contam sozinhas,
+// não precisa clicar nelas de novo.
 function handleTap(cell){
   const feedback = document.getElementById('word-feedback');
-  // tocar de novo na última letra desfaz ela
-  if(tapSel.length && tapSel[tapSel.length-1] === cell){
-    tapSel.pop(); highlight(tapSel); feedback.textContent = ''; return;
+  feedback.textContent = '';
+  if(tapSel.includes(cell)){
+    // tocar de novo numa letra marcada desfaz ela
+    tapSel = tapSel.filter(c => c !== cell);
+    highlight(tapSel);
+    return;
   }
-  const candidate = tapSel.includes(cell) ? [cell] : tapSel.concat(cell);
-  const text = lettersOf(candidate);
   const words = remainingWords();
-  if(isStraight(candidate) && words.some(w => w.startsWith(text))){
-    tapSel = candidate;
-  } else {
-    // não continua nenhuma palavra: recomeça a partir dessa letra, sem penalidade
-    tapSel = [cell];
-  }
+  const fits = sel => words.filter(w => { const cs = wordCells(w); return sel.every(c => cs.includes(c)); });
+  let candidate = tapSel.concat(cell);
+  if(!fits(candidate).length) candidate = [cell]; // letra não combina: recomeça dela, sem penalidade
+  tapSel = candidate;
   highlight(tapSel);
-  const word = lettersOf(tapSel);
-  if(tapSel.length > 1 && words.includes(word)){ markFound(word, tapSel); return; }
-  feedback.textContent = tapSel.length > 1 ? lettersOf(tapSel) + '...' : '';
+  for(const w of fits(tapSel)){
+    const cs = wordCells(w);
+    if(cs.every(c => tapSel.includes(c) || c.classList.contains('found-cell'))){ markFound(w, cs); return; }
+  }
 }
 
 function initWordSearch(){
