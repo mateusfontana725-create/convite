@@ -11,18 +11,14 @@
   :root{
     --cream:#f3efe3;
     --paper:#faf6ec;
-    --paper-card:#ffffff;
     --green:#1f4536;
     --green-deep:#122b21;
-    --green-soft:#2a5946;
     --gold:#c9a24a;
     --gold-light:#e8c877;
     --gold-dark:#9c7a2e;
     --ink:#2b2b26;
     --ink-light:#5c5748;
     --rose:#c76b7a;
-    --blue:#7f9bd6;
-    --yellow:#e8b84b;
     --danger:#a94442;
   }
   *{box-sizing:border-box;}
@@ -68,6 +64,7 @@
     transition:transform 0.2s ease, background 0.2s ease;
   }
   .price-tag.bump{animation:shake .35s ease;background:#f6dede;}
+  @keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-5px);}75%{transform:translateX(5px);}}
 
   .progress{
     display:flex;gap:5px;align-items:center;
@@ -80,13 +77,15 @@
   .progress .dot.done{background:var(--green);}
   .progress .dot.now{background:var(--gold);}
 
+  /* Botões de teste: só aparecem abrindo o link com ?teste no final */
   .skip-btn-dev{
+    display:none;
     background:transparent;border:1px dashed var(--gold-dark);
     color:var(--gold-dark);font-family:sans-serif;font-size:0.75rem;
     padding:3px 8px;border-radius:4px;cursor:pointer;margin-top:2px;
-    opacity:0.7;transition:opacity 0.2s ease;
+    opacity:0.7;position:relative;z-index:10;
   }
-  .skip-btn-dev:hover{opacity:1;background:rgba(201,162,74,0.1);}
+  body.dev .skip-btn-dev{display:inline-block;}
 
   .names{
     font-family:'Mrs Saint Delafield', cursive;
@@ -103,17 +102,18 @@
     display:block;
     margin:0.2rem 0;
   }
-  .subtitle{
-    font-style:italic;
-    font-size:1.3rem;
-    color:var(--ink-light);
-    max-width:340px;
-    margin:0.8rem 0 2rem;
-    z-index:2;
+  .intro{
+    max-width:360px;margin:1rem 0 1.6rem;z-index:2;
   }
+  .intro p{font-style:italic;font-size:1.25rem;line-height:1.5;color:var(--ink);margin:0 0 0.8rem;}
+  .intro .rules{
+    font-size:1rem;color:var(--ink-light);
+    border-top:1px solid #e2d9c2;padding-top:0.8rem;margin-top:0.4rem;
+  }
+  .intro .rules strong{color:var(--green);font-style:normal;font-family:'Playfair Display', serif;}
 
   .envelope-wrap{
-    position:relative;width:min(100vw,450px);aspect-ratio:5/3.3;
+    position:relative;width:min(90vw,420px);aspect-ratio:5/3.3;
     cursor:pointer;z-index:2;user-select:none;
   }
   .env-body{position:absolute;inset:0;background:linear-gradient(155deg,#245542,var(--green-deep));border-radius:4px;}
@@ -122,12 +122,13 @@
   .seal{position:absolute;left:50%;top:58%;transform:translate(-50%,-50%);width:50px;height:50px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#e8c877,var(--gold-dark));display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(0,0,0,.35);z-index:3;transition:opacity .4s ease, transform .4s ease;}
   .envelope-wrap.open .seal{opacity:0;transform:translate(-50%,-50%) scale(.5);}
   .seal svg{width:24px;height:24px;}
-  .hint{font-style:italic;font-size:1.05rem;color:var(--green);margin-top:1rem;opacity:0.85;z-index:2;}
+  .hint{font-style:italic;font-size:1.05rem;color:var(--green);margin-top:1rem;opacity:0.85;z-index:2;animation:pulse 2s ease-in-out infinite;}
+  @keyframes pulse{0%,100%{opacity:.5;}50%{opacity:1;}}
 
   .task-title{font-family:'Playfair Display', serif;font-size:1.4rem;color:var(--green);margin-bottom:0.2rem;z-index:2;}
-  .task-desc{font-style:italic;color:var(--ink-light);max-width:340px;margin-bottom:1.2rem;z-index:2;font-size:0.95rem;}
+  .task-desc{font-style:italic;color:var(--ink-light);max-width:340px;margin-bottom:1.2rem;z-index:2;font-size:1rem;}
 
-  /* FASE QUEBRA-CABEÇA 16 PEÇAS (4x4) */
+  /* FASE 1: QUEBRA-CABEÇA 4x4 */
   .puzzle-container{display:flex;flex-direction:column;align-items:center;gap:12px;z-index:2;}
   .puzzle-board{
     display:grid;grid-template-columns:repeat(4,60px);grid-template-rows:repeat(4,60px);
@@ -145,29 +146,14 @@
     min-height:90px;padding:8px;background:var(--paper);border-radius:8px;border:1px solid #e2d9c2;
   }
   .puzzle-piece{
-    width:56px;height:56px;background-size:240px 240px;border:1px solid #fff;
+    width:60px;height:60px;background-size:240px 240px;border:1px solid #fff;
     border-radius:3px;cursor:grab;box-shadow:0 2px 4px rgba(0,0,0,0.2);
     touch-action:none;user-select:none;
   }
   .puzzle-piece:active{cursor:grabbing;}
-  .puzzle-slot .puzzle-piece{width:60px;height:60px;border:none;border-radius:0;box-shadow:none;cursor:default;}
-  
-  /* JOGO DAS ALIANÇAS */
-  .ring-grid{display:grid;grid-template-columns:repeat(3,72px);gap:14px;z-index:2;margin-bottom:1rem;}
-  .ring-tile{
-    width:72px;height:72px;border-radius:10px;
-    background:var(--paper);border:1px solid #e2d9c2;
-    display:flex;align-items:center;justify-content:center;
-    cursor:pointer;transition:transform .15s ease;
-  }
-  .ring-tile:hover{transform:translateY(-2px);}
-  .ring-tile.miss{animation:shake .35s ease;}
-  .ring-tile.found{background:var(--gold);border-color:var(--gold-dark);}
-  @keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-5px);}75%{transform:translateX(5px);}}
-  .ring-tile svg{width:30px;height:30px;color:var(--green);}
-  .ring-tile.found svg{color:#3a2c0e;}
+  .puzzle-slot .puzzle-piece{border:none;border-radius:0;box-shadow:none;cursor:default;}
 
-  /* JOGO DA MEMÓRIA */
+  /* FASE 2: JOGO DA MEMÓRIA */
   .memory-grid{display:grid;grid-template-columns:repeat(3,64px);gap:10px;z-index:2;margin-bottom:1rem;}
   @media (min-width: 400px) { .memory-grid{grid-template-columns:repeat(4,64px);} }
   .mem-card{width:64px;height:64px;border-radius:8px;cursor:pointer;background:var(--green);position:relative;perspective:600px;}
@@ -180,314 +166,290 @@
   .mem-front svg{width:28px;height:28px;color:var(--rose);}
   .mem-card.matched .mem-front{background:#e7f0e2;border-color:var(--green);}
 
-  /* JOGO GENIUS */
-  .genius-grid{display:grid;grid-template-columns:repeat(2,85px);gap:12px;z-index:2;margin-bottom:1rem;}
-  .genius-btn{
-    width:85px;height:85px;border-radius:12px;border:none;cursor:pointer;
-    opacity:0.65;transition:opacity 0.2s ease, transform 0.1s ease;
-    display:flex;align-items:center;justify-content:center;
+  /* FASE 3: CAÇA-PALAVRAS */
+  .phrase{
+    display:flex;flex-wrap:wrap;justify-content:center;gap:6px 14px;
+    max-width:360px;margin-bottom:1rem;z-index:2;
   }
-  .genius-btn:active, .genius-btn.lit{opacity:1;transform:scale(0.96);box-shadow: 0 0 15px rgba(255,255,255,0.8);}
-  .genius-btn svg{width:36px;height:36px;color:#fff;}
-  .g-red{background:var(--rose);}
-  .g-blue{background:var(--blue);}
-  .g-yellow{background:var(--yellow);}
-  .g-green{background:var(--green);}
+  .phrase-word{display:flex;gap:2px;}
+  .phrase-letter{
+    width:18px;border-bottom:2px solid var(--gold);
+    font-family:'Playfair Display', serif;font-weight:700;font-size:1rem;
+    color:var(--green);height:1.5rem;line-height:1.5rem;
+  }
+  .phrase-letter.hint{color:var(--gold-dark);}
+  .phrase-word.found .phrase-letter{border-color:var(--green);animation:pop .4s ease;}
+  .phrase-q{font-family:'Playfair Display', serif;font-weight:700;color:var(--gold-dark);font-size:1.1rem;}
+  @keyframes pop{0%{transform:scale(1);}50%{transform:scale(1.35);}100%{transform:scale(1);}}
 
-  /* JOGO CAÇA-PALAVRAS */
-  .timer-box{
-    font-family:'Playfair Display', serif;font-weight:bold;font-size:1.1rem;
-    color:var(--danger);margin-bottom:0.5rem;z-index:2;
+  .word-grid{
+    display:grid;grid-template-columns:repeat(9,1fr);gap:3px;
+    width:min(92vw,360px);z-index:2;margin-bottom:0.6rem;
+    user-select:none;-webkit-user-select:none;touch-action:none;
   }
-  .word-grid{display:grid;grid-template-columns:repeat(6,38px);gap:6px;z-index:2;margin-bottom:1rem;user-select:none;}
   .word-cell{
-    width:38px;height:38px;background:var(--paper);border:1px solid #e2d9c2;
-    border-radius:6px;display:flex;align-items:center;justify-content:center;
-    font-family:'Playfair Display', serif;font-weight:bold;font-size:1.1rem;
-    color:var(--green);cursor:pointer;transition:background 0.2s ease;
+    aspect-ratio:1;background:var(--paper);border:1px solid #e2d9c2;
+    border-radius:5px;display:flex;align-items:center;justify-content:center;
+    font-family:'Playfair Display', serif;font-weight:700;font-size:clamp(0.9rem,4vw,1.1rem);
+    color:var(--green);cursor:pointer;transition:background 0.15s ease;
   }
+  .word-cell.anchor{background:var(--gold-light);border-color:var(--gold-dark);}
   .word-cell.selected{background:var(--gold);color:#fff;border-color:var(--gold-dark);}
   .word-cell.found-cell{background:var(--green);color:var(--cream);border-color:var(--green-deep);}
-  .word-targets{display:flex;gap:12px;z-index:2;margin-bottom:0.8rem;}
-  .word-target{font-style:italic;font-size:0.95rem;color:#7a7260;}
-  .word-target.found{text-decoration:line-through;color:var(--green);font-weight:bold;}
+  .word-cell.bad{background:#f6dede;border-color:var(--danger);}
 
-  /* QUIZ */
-  .quiz-opts{display:flex;flex-direction:column;gap:10px;width:min(90vw,320px);z-index:2;}
-  .quiz-opt{
-    font-family:'Cormorant Garamond', serif;font-size:1.15rem;
-    background:var(--paper);border:1px solid #e2d9c2;border-radius:6px;
-    padding:0.8rem 1rem;cursor:pointer;transition:background .2s ease;
+  .reveal-question{
+    display:none;font-family:'Mrs Saint Delafield', cursive;
+    font-size:clamp(2.6rem,10vw,3.6rem);color:var(--green);line-height:1.1;
+    max-width:380px;z-index:2;margin:0.4rem 0;
   }
-  .quiz-opt:hover{background:#efe7d3;}
-  .quiz-opt.wrong{animation:shake .35s ease;background:#f6dede;border-color:var(--danger);}
-  .quiz-opt.correct{background:#dcecd4;border-color:var(--green);}
+  .reveal-question.show{display:block;animation:fadein .8s ease;}
 
-  .feedback{margin-top:0.5rem;font-style:italic;color:var(--green);min-height:1.4em;z-index:2;font-size:0.95rem;}
+  .feedback{margin-top:0.5rem;font-style:italic;color:var(--green);min-height:1.4em;z-index:2;font-size:1rem;}
 
   .continue-btn{
-    margin-top:1rem;font-family:'Cormorant Garamond', serif;font-size:1.1rem;
-    background:var(--green);color:var(--cream);border:none;border-radius:2px;
+    margin-top:1rem;font-family:'Cormorant Garamond', serif;font-size:1.15rem;
+    background:var(--green);color:var(--cream);border:none;border-radius:30px;
     padding:0.8rem 2rem;cursor:pointer;z-index:2;transition:background .2s ease;
     display:none;
   }
   .continue-btn.show{display:inline-block;}
   .continue-btn:hover{background:var(--green-deep);}
 
-  /* CONFETI */
-  .confetti {
-    position: fixed;top: -10px;width: 10px;height: 10px;
-    z-index: 9999;pointer-events: none;border-radius: 2px;
+  /* "CÁLCULO" DO PRESENTE */
+  #stage-calc{background:#0e1f18;color:var(--cream);font-family:'Courier New', monospace;}
+  .calc-label{font-size:0.95rem;letter-spacing:2px;text-transform:uppercase;color:var(--gold-light);margin-bottom:1rem;}
+  .calc-value{font-size:clamp(2.4rem,11vw,3.6rem);font-weight:bold;margin-bottom:1.2rem;}
+  .calc-log{font-size:0.9rem;line-height:1.7;max-width:340px;text-align:left;min-height:9em;color:#9fd3b0;}
+  .calc-log .err{color:#ff7b7b;}
+  .calc-log .ok{color:var(--gold-light);}
+  .glitch{animation:glitch .18s steps(2) infinite;color:#ff7b7b;}
+  @keyframes glitch{
+    0%{transform:translate(0,0) skewX(0);text-shadow:2px 0 #0ff,-2px 0 #f0f;}
+    25%{transform:translate(-3px,1px) skewX(8deg);}
+    50%{transform:translate(3px,-1px) skewX(-6deg);text-shadow:-2px 0 #0ff,2px 0 #f0f;}
+    100%{transform:translate(0,0) skewX(0);}
   }
+  .shake-screen{animation:shake .12s linear 6;}
+  #stage-calc .continue-btn{background:var(--gold);color:var(--green-deep);font-family:'Playfair Display', serif;font-weight:700;}
 
-  /* SEÇÃO FINAL */
-  #stage-final { padding: 4rem 1.5rem 5rem; }
-  .monogram{font-family:'Mrs Saint Delafield', cursive;font-size:clamp(4rem, 14vw, 5.5rem);color:var(--gold-light);line-height: 0.9;margin-bottom:1.8rem;z-index:2;text-shadow: 0 2px 10px rgba(0,0,0,0.2);}
-  .paper-card{background:var(--paper);max-width:540px;width:100%;padding:2.5rem 2rem;border-radius:8px;box-shadow:0 15px 35px rgba(0,0,0,0.3);z-index:2;font-style:italic;font-size:clamp(1.1rem, 3.5vw, 1.25rem);line-height:1.75;color:var(--ink);border: 1px solid var(--gold-light);margin-bottom:2.5rem;}
+  /* CONFETE */
+  .confetti{position:fixed;top:-10px;width:10px;height:10px;z-index:9999;pointer-events:none;border-radius:2px;}
+
+  /* FINAL */
+  #stage-final{padding:4rem 1.5rem 5rem;justify-content:flex-start;}
+  .monogram{font-family:'Mrs Saint Delafield', cursive;font-size:clamp(4rem,14vw,5.5rem);color:var(--gold-light);line-height:0.9;margin-bottom:1.8rem;z-index:2;text-shadow:0 2px 10px rgba(0,0,0,0.2);}
+  .paper-card{background:var(--paper);max-width:540px;width:100%;padding:2.5rem 2rem;border-radius:8px;box-shadow:0 15px 35px rgba(0,0,0,0.3);z-index:2;font-style:italic;font-size:clamp(1.1rem,3.5vw,1.25rem);line-height:1.75;color:var(--ink);border:1px solid var(--gold-light);margin-bottom:2rem;}
   .paper-card p{margin:0 0 1.2rem;}
-  .paper-card p:last-child{margin-bottom:0;}
-  .final-price-box{background:linear-gradient(135deg, var(--gold-light), var(--gold));color:var(--green-deep);padding:8px 18px;border-radius:30px;font-family:'Playfair Display', serif;font-weight:600;font-size: 0.95rem;margin-bottom:1.5rem;display:inline-block;box-shadow: 0 4px 12px rgba(0,0,0,0.15);}
-  .quote{font-style:italic;font-size:clamp(1.2rem, 4.5vw, 1.5rem);line-height:1.6;color:var(--cream);max-width:480px;margin:0 0 0.5rem;z-index:2;font-weight: 400;}
-  .quote-cite{color:var(--gold-light);font-family: 'Playfair Display', serif;font-size: 0.95rem;letter-spacing: 1.5px;text-transform: uppercase;z-index:2;margin-bottom:2.8rem;}
+  .final-price-box{background:linear-gradient(135deg,var(--gold-light),var(--gold));color:var(--green-deep);padding:8px 18px;border-radius:30px;font-family:'Playfair Display', serif;font-style:normal;font-weight:600;font-size:0.95rem;margin-bottom:1.5rem;display:inline-block;box-shadow:0 4px 12px rgba(0,0,0,0.15);}
+  .big-question{font-family:'Mrs Saint Delafield', cursive;font-style:normal;font-size:clamp(2.6rem,10vw,3.4rem);color:var(--green);line-height:1.1;margin:0.5rem 0 1.4rem;}
+  .answer-area{position:relative;display:flex;justify-content:center;gap:14px;flex-wrap:wrap;min-height:60px;}
+  .yes-btn{font-family:'Playfair Display', serif;font-size:1.05rem;letter-spacing:1px;text-transform:uppercase;background:var(--green);color:var(--cream);font-weight:700;border:none;padding:0.9rem 2rem;border-radius:30px;cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,0.2);transition:transform .15s ease;}
+  .yes-btn:active{transform:scale(.97);}
+  .no-btn{font-family:'Playfair Display', serif;font-size:0.95rem;background:transparent;color:var(--ink-light);border:1px solid #cfc5ab;padding:0.8rem 1.4rem;border-radius:30px;cursor:pointer;transition:left .25s ease, top .25s ease;}
+  .no-btn.run{position:fixed;z-index:50;background:var(--paper);}
+  .answer-msg{font-style:italic;color:var(--green);min-height:1.4em;margin-top:0.8rem;font-size:1.05rem;}
+
+  .after-yes{display:none;flex-direction:column;align-items:center;width:100%;}
+  .after-yes.show{display:flex;animation:fadein .8s ease;}
+  .quote{font-style:italic;font-size:clamp(1.2rem,4.5vw,1.5rem);line-height:1.6;color:var(--cream);max-width:480px;margin:0 0 0.5rem;z-index:2;}
+  .quote-cite{color:var(--gold-light);font-family:'Playfair Display', serif;font-size:0.95rem;letter-spacing:1.5px;text-transform:uppercase;z-index:2;margin-bottom:2.8rem;}
   .big-date{display:flex;align-items:center;justify-content:center;gap:0.8rem;margin-bottom:2rem;z-index:2;}
-  .big-date .num{font-family:'Playfair Display', serif;font-size:clamp(4.5rem, 18vw, 6.5rem);color:var(--gold-light);line-height: 0.8;font-weight: 700;}
-  .big-date .month{font-family:'Mrs Saint Delafield', cursive;font-size:clamp(2.5rem, 9vw, 3.6rem);color:var(--cream);line-height: 1;}
-  .details-time-label{font-family: 'Playfair Display', serif;font-size:0.85rem;letter-spacing:2px;text-transform: uppercase;color:var(--gold-light);margin-bottom: 0.2rem;}
-  .details-time{font-family:'Playfair Display', serif;font-size:clamp(2.5rem, 8vw, 3.2rem);color:var(--cream);margin-bottom:2.5rem;z-index:2;font-weight: 500;}
-  .detail-block{max-width:440px;width:100%;margin-bottom:1.2rem;z-index:2;text-decoration:none;color:var(--ink);display:block;background: var(--paper);padding: 1.4rem 1.2rem;border-radius: 8px;border: 1px solid rgba(201, 162, 74, 0.4);box-shadow: 0 8px 20px rgba(0,0,0,0.15);transition: transform 0.2s ease, border-color 0.2s ease;}
-  .detail-block:hover {transform: translateY(-3px);border-color: var(--gold);}
+  .big-date .num{font-family:'Playfair Display', serif;font-size:clamp(4.5rem,18vw,6.5rem);color:var(--gold-light);line-height:0.8;font-weight:700;}
+  .big-date .month{font-family:'Mrs Saint Delafield', cursive;font-size:clamp(2.5rem,9vw,3.6rem);color:var(--cream);line-height:1;}
+  .details-time-label{font-family:'Playfair Display', serif;font-size:0.85rem;letter-spacing:2px;text-transform:uppercase;color:var(--gold-light);margin-bottom:0.2rem;}
+  .details-time{font-family:'Playfair Display', serif;font-size:clamp(2.5rem,8vw,3.2rem);color:var(--cream);margin-bottom:2.5rem;z-index:2;font-weight:500;}
+  .detail-block{max-width:440px;width:100%;margin-bottom:1.2rem;z-index:2;text-decoration:none;color:var(--ink);display:block;background:var(--paper);padding:1.4rem 1.2rem;border-radius:8px;border:1px solid rgba(201,162,74,0.4);box-shadow:0 8px 20px rgba(0,0,0,0.15);transition:transform 0.2s ease, border-color 0.2s ease;}
+  .detail-block:hover{transform:translateY(-3px);border-color:var(--gold);}
   .detail-icon{width:32px;height:32px;margin:0 auto 0.6rem;color:var(--green);}
   .detail-icon svg{width:100%;height:100%;}
-  .detail-name{font-family: 'Playfair Display', serif;font-size:1.25rem;font-weight: 600;color: var(--green-deep);margin:0 0 0.25rem;}
+  .detail-name{font-family:'Playfair Display', serif;font-size:1.25rem;font-weight:600;color:var(--green-deep);margin:0 0 0.25rem;}
   .detail-addr{font-style:italic;font-size:1rem;color:var(--ink-light);margin:0;}
-  .tap-label{font-family: 'Playfair Display', serif;text-transform: uppercase;letter-spacing: 1px;font-size:0.75rem;color:var(--gold-dark);margin-bottom:0.4rem;font-weight: 600;}
-  .closing-title{font-family:'Mrs Saint Delafield', cursive;font-size:clamp(2.4rem, 8vw, 3.2rem);color:var(--gold-light);margin: 2rem 0 1.2rem;z-index:2;}
-  .rsvp-btn{font-family:'Playfair Display', serif;font-size:1.05rem;letter-spacing: 1px;text-transform: uppercase;background:var(--gold);color:var(--green-deep);font-weight: 700;border:none;padding:1rem 2.5rem;border-radius:30px;cursor:pointer;z-index:2;box-shadow: 0 6px 18px rgba(0,0,0,0.2);transition:background .3s ease, transform .15s ease, box-shadow .3s ease;}
-  .rsvp-btn:hover{background:var(--gold-light);box-shadow: 0 8px 22px rgba(0,0,0,0.3);}
-  .rsvp-btn:active{transform:scale(.97);}
-  .rsvp-msg{margin-top:1rem;font-style:italic;color:var(--gold-light);font-size:1.1rem;min-height:1.4em;z-index:2;}
-  .video-note{margin-top:2rem;max-width:340px;font-style:italic;font-size:1rem;line-height: 1.5;color:rgba(255,255,255,0.85);z-index:2;}
+  .tap-label{font-family:'Playfair Display', serif;text-transform:uppercase;letter-spacing:1px;font-size:0.75rem;color:var(--gold-dark);margin-bottom:0.4rem;font-weight:600;}
+  .closing-title{font-family:'Mrs Saint Delafield', cursive;font-size:clamp(2.4rem,8vw,3.2rem);color:var(--gold-light);margin:2rem 0 1.2rem;z-index:2;}
+  .wpp-btn{font-family:'Playfair Display', serif;font-size:1rem;letter-spacing:1px;text-transform:uppercase;background:var(--gold);color:var(--green-deep);font-weight:700;border:none;padding:1rem 2.2rem;border-radius:30px;cursor:pointer;z-index:2;box-shadow:0 6px 18px rgba(0,0,0,0.2);text-decoration:none;display:inline-block;}
+  .wpp-btn:hover{background:var(--gold-light);}
+  .video-note{margin-top:2rem;max-width:340px;font-style:italic;font-size:1rem;line-height:1.5;color:rgba(255,255,255,0.85);z-index:2;}
 </style>
 </head>
 <body>
 
-<!-- ETAPA CONVITE BASE -->
+<!-- CAPA -->
 <section class="stage bg-cream active" id="stage-cover">
   <svg class="corner tl" viewBox="0 0 200 200"></svg>
   <svg class="corner br" viewBox="0 0 200 200"></svg>
   <div class="names">Mateus<span class="amp">&amp;</span>Gabrielle</div>
-  <div class="subtitle">Esse convite tem 6 fases para você desbloquear. Cada erro aumenta a lista de presentes em R$ 100! Bora?</div>
+  <div class="intro">
+    <p>Como moramos longe, gostaríamos de fazer um convite especial pra vocês — e do nosso jeitinho.</p>
+    <p class="rules">São <strong>3 fases</strong> para desbloquear. Mas atenção: cada erro aumenta o valor do presente em <strong>R$ 100</strong>. 😅</p>
+  </div>
   <div class="envelope-wrap" id="envelope" role="button" tabindex="0" aria-label="Abrir convite">
     <div class="env-body">
-      <div class="seal" id="seal">
+      <div class="seal">
         <svg viewBox="0 0 24 24" fill="none" stroke="#3a2c0e" stroke-width="1.4"><circle cx="12" cy="12" r="9"/><path d="M12 4v16M4 12h16" stroke-width="0.8"/></svg>
       </div>
     </div>
     <div class="env-flap"></div>
   </div>
   <div class="hint">toque no envelope para começar</div>
-  <button class="skip-btn-dev" onclick="goToStage('stage-puzzle'); initPuzzleGame();">⚡ Pular Envelope (Modo Teste)</button>
 </section>
 
-<!-- FASE 1: QUEBRA-CABEÇA (16 PEÇAS) -->
+<!-- FASE 1: QUEBRA-CABEÇA -->
 <section class="stage bg-cream" id="stage-puzzle">
   <svg class="corner tl" viewBox="0 0 200 200"></svg>
   <div class="header-bar">
-    <div class="price-tag">Valor Presente: R$ <span class="gift-price">1000</span>,00</div>
+    <div class="price-tag">Valor do presente: R$ <span class="gift-price">1.000</span>,00</div>
     <div class="progress">
-      <span class="dot now"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span>
-      <span>fase 1 de 6</span>
+      <span class="dot now"></span><span class="dot"></span><span class="dot"></span>
+      <span>fase 1 de 3</span>
     </div>
-    <button class="skip-btn-dev" onclick="goToStage('stage-1'); initRingGame();">⏭️ Avançar Fase (Teste)</button>
+    <button class="skip-btn-dev" onclick="goToStage('stage-memory'); initMemoryGame();">⏭️ pular fase (teste)</button>
   </div>
-  <div class="task-title">Monte a Foto do Pedido (16 Peças)</div>
-  <div class="task-desc">Arraste e solte cada peça no local correto do quadro. Se errar a posição, soma +R$ 100!</div>
-  
+  <div class="task-title">Monte a foto do pedido</div>
+  <div class="task-desc">Arraste cada peça para o lugar certo. Peça no lugar errado: +R$ 100!</div>
   <div class="puzzle-container">
     <div class="puzzle-board" id="puzzle-board"></div>
     <div class="puzzle-pieces" id="puzzle-pieces"></div>
   </div>
-  
   <div class="feedback" id="puzzle-feedback"></div>
   <svg class="corner br" viewBox="0 0 200 200"></svg>
 </section>
 
-<!-- FASE 2: ALIANÇA -->
-<section class="stage bg-cream" id="stage-1">
+<!-- FASE 2: JOGO DA MEMÓRIA -->
+<section class="stage bg-cream" id="stage-memory">
   <svg class="corner tl" viewBox="0 0 200 200"></svg>
   <div class="header-bar">
-    <div class="price-tag">Valor Presente: R$ <span class="gift-price">1000</span>,00</div>
+    <div class="price-tag">Valor do presente: R$ <span class="gift-price">1.000</span>,00</div>
     <div class="progress">
-      <span class="dot done"></span><span class="dot now"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span>
-      <span>fase 2 de 6</span>
+      <span class="dot done"></span><span class="dot now"></span><span class="dot"></span>
+      <span>fase 2 de 3</span>
     </div>
-    <button class="skip-btn-dev" onclick="goToStage('stage-2'); initMemoryGame();">⏭️ Avançar Fase (Teste)</button>
+    <button class="skip-btn-dev" onclick="goToStage('stage-words'); initWordSearch();">⏭️ pular fase (teste)</button>
   </div>
-  <div class="task-title">encontre a aliança escondida</div>
-  <div class="task-desc">tem uma aliança escondida entre as flores. toque na certa pra passar.</div>
-  <div class="ring-grid" id="ring-grid"></div>
-  <div class="feedback" id="ring-feedback"></div>
-  <svg class="corner br" viewBox="0 0 200 200"></svg>
-</section>
-
-<!-- FASE 3: JOGO DA MEMÓRIA -->
-<section class="stage bg-cream" id="stage-2">
-  <svg class="corner tl" viewBox="0 0 200 200"></svg>
-  <div class="header-bar">
-    <div class="price-tag">Valor Presente: R$ <span class="gift-price">1000</span>,00</div>
-    <div class="progress">
-      <span class="dot done"></span><span class="dot done"></span><span class="dot now"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span>
-      <span>fase 3 de 6</span>
-    </div>
-    <button class="skip-btn-dev" onclick="goToStage('stage-3'); initGeniusGame();">⏭️ Avançar Fase (Teste)</button>
-  </div>
-  <div class="task-title">jogo da memória</div>
-  <div class="task-desc">encontre os 6 pares de ícones do casal sem errar muito!</div>
+  <div class="task-title">Jogo da memória</div>
+  <div class="task-desc">Encontre os 6 pares. Cada par errado: +R$ 100!</div>
   <div class="memory-grid" id="memory-grid"></div>
   <div class="feedback" id="memory-feedback"></div>
   <svg class="corner br" viewBox="0 0 200 200"></svg>
 </section>
 
-<!-- FASE 4: GENIUS / SEQUÊNCIA MUSICAL (MAIS DIFÍCIL) -->
-<section class="stage bg-cream" id="stage-3">
+<!-- FASE 3: CAÇA-PALAVRAS (SEM TEMPO) -->
+<section class="stage bg-cream" id="stage-words">
   <svg class="corner tl" viewBox="0 0 200 200"></svg>
   <div class="header-bar">
-    <div class="price-tag">Valor Presente: R$ <span class="gift-price">1000</span>,00</div>
+    <div class="price-tag">Valor do presente: R$ <span class="gift-price">1.000</span>,00</div>
     <div class="progress">
-      <span class="dot done"></span><span class="dot done"></span><span class="dot done"></span><span class="dot now"></span><span class="dot"></span><span class="dot"></span>
-      <span>fase 4 de 6</span>
+      <span class="dot done"></span><span class="dot done"></span><span class="dot now"></span>
+      <span>fase 3 de 3</span>
     </div>
-    <button class="skip-btn-dev" onclick="goToStage('stage-4'); initWordSearch();">⏭️ Avançar Fase (Teste)</button>
+    <button class="skip-btn-dev" onclick="finishWordSearch()">⏭️ pular fase (teste)</button>
   </div>
-  <div class="task-title">harmonia musical do casal</div>
-  <div class="task-desc">Escute as notas e memorize a sequência de 5 sons!</div>
-  <div class="genius-grid">
-    <button class="genius-btn g-red" data-color="0"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-7-4.35-9.5-8.5C.5 8.5 3 5 6.5 5c2 0 3.3 1 4 2 .7-1 2-2 4-2 3.5 0 6 3.5 4 7.5C19 16.65 12 21 12 21z"/></svg></button>
-    <button class="genius-btn g-blue" data-color="1"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.5 6.5L21 9l-5 4.5L17.5 21 12 17l-5.5 4L8 13.5 3 9l6.5-.5z"/></svg></button>
-    <button class="genius-btn g-yellow" data-color="2"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="8"/></svg></button>
-    <button class="genius-btn g-green" data-color="3"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3v18M3 12h18"/></svg></button>
-  </div>
-  <div class="feedback" id="genius-feedback">Clique para ouvir a melodia</div>
-  <button class="continue-btn" id="genius-start-btn" style="display:inline-block; margin-top:0.5rem;" onclick="playGeniusSequence()">Ouvir Sequência 🎵</button>
-  <svg class="corner br" viewBox="0 0 200 200"></svg>
-</section>
-
-<!-- FASE 5: CAÇA PALAVRAS COM TEMPO -->
-<section class="stage bg-cream" id="stage-4">
-  <svg class="corner tl" viewBox="0 0 200 200"></svg>
-  <div class="header-bar">
-    <div class="price-tag">Valor Presente: R$ <span class="gift-price">1000</span>,00</div>
-    <div class="progress">
-      <span class="dot done"></span><span class="dot done"></span><span class="dot done"></span><span class="dot done"></span><span class="dot now"></span><span class="dot"></span>
-      <span>fase 5 de 6</span>
-    </div>
-    <button class="skip-btn-dev" onclick="clearInterval(wordTimer); goToStage('stage-5'); initQuiz();">⏭️ Avançar Fase (Teste)</button>
-  </div>
-  <div class="task-title">caça-palavras express</div>
-  <div class="task-desc">ache as 3 palavras antes que o tempo acabe!</div>
-  
-  <div class="timer-box">Tempo: <span id="word-timer-count">15</span>s</div>
-
-  <div class="word-targets">
-    <span class="word-target" id="target-AMOR">AMOR</span>
-    <span class="word-target" id="target-UNIAO">UNIAO</span>
-    <span class="word-target" id="target-FE">FE</span>
-  </div>
+  <div class="task-title">A grande pergunta</div>
+  <div class="task-desc" id="words-desc">Ache as palavras escondidas para descobrir a nossa pergunta. Arraste o dedo sobre a palavra (ou toque na primeira e na última letra).</div>
+  <div class="phrase" id="phrase"></div>
   <div class="word-grid" id="word-grid"></div>
+  <div class="reveal-question" id="reveal-question">Vocês aceitam ser nossos padrinhos?</div>
   <div class="feedback" id="word-feedback"></div>
+  <button class="continue-btn" id="words-continue" onclick="startCalc()">responder 💍</button>
   <svg class="corner br" viewBox="0 0 200 200"></svg>
 </section>
 
-<!-- FASE 6: QUIZ FINAL -->
-<section class="stage bg-cream" id="stage-5">
-  <svg class="corner tl" viewBox="0 0 200 200"></svg>
-  <div class="header-bar">
-    <div class="price-tag">Valor Presente: R$ <span class="gift-price">1000</span>,00</div>
-    <div class="progress">
-      <span class="dot done"></span><span class="dot done"></span><span class="dot done"></span><span class="dot done"></span><span class="dot done"></span><span class="dot now"></span>
-      <span>fase 6 de 6</span>
-    </div>
-    <button class="skip-btn-dev" onclick="goToStage('stage-final'); launchConfetti();">⏭️ Pular para Convite Final (Teste)</button>
-  </div>
-  <div class="task-title">última pergunta</div>
-  <div class="task-desc">que horas começa a cerimônia?</div>
-  <div class="quiz-opts" id="quiz-opts">
-    <button class="quiz-opt" data-correct="false">15:00</button>
-    <button class="quiz-opt" data-correct="true">16:00</button>
-    <button class="quiz-opt" data-correct="false">18:00</button>
-  </div>
-  <div class="feedback" id="quiz-feedback"></div>
-  <button class="continue-btn" id="quiz-continue">ver convite</button>
-  <svg class="corner br" viewBox="0 0 200 200"></svg>
+<!-- "SISTEMA" CALCULANDO O PRESENTE -->
+<section class="stage" id="stage-calc">
+  <div class="calc-label">calculando o valor final do presente</div>
+  <div class="calc-value" id="calc-value">R$ 0,00</div>
+  <div class="calc-log" id="calc-log"></div>
+  <button class="continue-btn" id="calc-continue" onclick="goToStage('stage-final'); launchConfetti();">ok, sem reclamações 😇</button>
 </section>
 
-<!-- ETAPA FINAL (CONVITE REVELADO) -->
+<!-- FINAL -->
 <section class="stage bg-green" id="stage-final">
   <div class="monogram">M &amp; G</div>
-  
+
   <div class="paper-card">
-    <div class="final-price-box">Sua pontuação final no presente: R$ <span class="gift-price">1000</span>,00 🎁</div>
-    <p>Você desbloqueou o convite! Deus, em Sua infinita bondade, nos concedeu a graça de viver este grande amor — e agora vamos dar um dos passos mais importantes da nossa caminhada: receber o Sacramento do Matrimônio.</p>
-    <p>Como moramos longe, queremos abrir esse convite com você numa videochamada, prometido?</p>
+    <div class="final-price-box">Valor final do presente: R$ <span class="gift-price">1.000</span>,00 🎁</div>
+    <p>Deus, em Sua infinita bondade, nos concedeu a graça de viver este grande amor — e agora vamos dar um dos passos mais importantes da nossa caminhada: receber o Sacramento do Matrimônio.</p>
+    <p>Para estar ao nosso lado no altar, escolhemos pessoas que são exemplo, apoio e família pra gente. Por isso, queremos perguntar:</p>
+    <div class="big-question">Vocês aceitam ser nossos padrinhos?</div>
+    <div class="answer-area">
+      <button class="yes-btn" id="yes-btn">Sim, aceitamos!</button>
+      <button class="no-btn" id="no-btn">Não</button>
+    </div>
+    <div class="answer-msg" id="answer-msg"></div>
   </div>
 
-  <div class="quote">&ldquo;Se nos amarmos uns aos outros, Deus permanece em nós, e o Seu amor em nós é realizado.&rdquo;</div>
-  <div class="quote-cite">1 João 4, 12</div>
+  <div class="after-yes" id="after-yes">
+    <div class="quote">&ldquo;Se nos amarmos uns aos outros, Deus permanece em nós, e o Seu amor em nós é realizado.&rdquo;</div>
+    <div class="quote-cite">1 João 4, 12</div>
 
-  <div class="big-date">
-    <span class="num">24</span>
-    <span class="month">abril</span>
+    <div class="big-date">
+      <span class="num">24</span>
+      <span class="month">abril</span>
+    </div>
+
+    <div class="details-time-label">início às</div>
+    <div class="details-time">16:00</div>
+
+    <a class="detail-block" href="https://www.google.com/maps/place/Par%C3%B3quia+Nossa+Senhora+das+Gra%C3%A7as/data=!4m2!3m1!1s0x0:0x82161909e4b842ef?sa=X&ved=1t:2428&ictx=111" target="_blank" rel="noopener">
+      <div class="tap-label">toque para abrir no mapa</div>
+      <div class="detail-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M4 21V9l8-5 8 5v12"/><path d="M9 21v-6h6v6"/><path d="M4 9h16" stroke-width="0.8"/><path d="M12 7v5" stroke-width="0.8"/></svg>
+      </div>
+      <div class="detail-name">Paróquia Nossa Senhora das Graças</div>
+      <div class="detail-addr">Londrina · Cerimônia</div>
+    </a>
+
+    <a class="detail-block" href="https://www.google.com/maps/place/R.+Geraldo+Rodrigues,+376+-+Cidadela,+Londrina+-+PR,+86072-090/@-23.2940787,-51.207989,126m/data=!3m1!1e3!4m14!1m7!3m6!1s0x94eb5b007fe45d55:0x669b2eff5407ed79!2zQXJ1YW7Dow!8m2!3d-23.2941325!4d-51.2076032!16s%2Fg%2F11yxy5lnmn!3m5!1s0x94eb5b1a4fdc1f81:0xc384ecb2f0a57004!8m2!3d-23.2938529!4d-51.2075477!16s%2Fg%2F11mcx_3nqc?entry=ttu" target="_blank" rel="noopener">
+      <div class="tap-label">toque para abrir no mapa</div>
+      <div class="detail-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M8 21l2-14 2 3 2-3 2 14"/><path d="M10 7a2 2 0 104 0 2 2 0 00-4 0z"/></svg>
+      </div>
+      <div class="detail-name">Recepção · Aruanã Eventos</div>
+      <div class="detail-addr">R. Geraldo Rodrigues, 376 — Cidadela, Londrina</div>
+    </a>
+
+    <a class="detail-block" href="https://noivos.casar.com/mateus-e-gabrielle-2027-04-24" target="_blank" rel="noopener">
+      <div class="tap-label">toque para abrir</div>
+      <div class="detail-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="4" y="8" width="16" height="12" rx="1"/><path d="M4 8l2-4h12l2 4"/><path d="M12 8v12" stroke-width="0.8"/></svg>
+      </div>
+      <div class="detail-name">Lista de Presentes</div>
+      <div class="detail-addr">Site do casal — Casar.com</div>
+    </a>
+
+    <div class="closing-title">Obrigado por dizerem sim!</div>
+    <a class="wpp-btn" id="wpp-btn" href="#" target="_blank" rel="noopener">avisar os noivos no WhatsApp</a>
+    <div class="video-note">P.S. bora marcar uma videochamada pra comemorar esse sim, mesmo de longe? 💚</div>
   </div>
-
-  <div class="details-time-label">início às</div>
-  <div class="details-time">16:00</div>
-
-  <a class="detail-block" href="https://www.google.com/maps/place/Par%C3%B3quia+Nossa+Senhora+das+Gra%C3%A7as/data=!4m2!3m1!1s0x0:0x82161909e4b842ef?sa=X&ved=1t:2428&ictx=111" target="_blank" rel="noopener">
-    <div class="tap-label">toque para acessar no mapa</div>
-    <div class="detail-icon">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M4 21V9l8-5 8 5v12"/><path d="M9 21v-6h6v6"/><path d="M4 9h16" stroke-width="0.8"/><path d="M12 7v5" stroke-width="0.8"/></svg>
-    </div>
-    <div class="detail-name">Paróquia Nossa Senhora das Graças</div>
-    <div class="detail-addr">Londrina · Cerimônia</div>
-  </a>
-
-  <a class="detail-block" href="https://www.google.com/maps/place/R.+Geraldo+Rodrigues,+376+-+Cidadela,+Londrina+-+PR,+86072-090/@-23.2940787,-51.207989,126m/data=!3m1!1e3!4m14!1m7!3m6!1s0x94eb5b007fe45d55:0x669b2eff5407ed79!2zQXJ1YW7Dow!8m2!3d-23.2941325!4d-51.2076032!16s%2Fg%2F11yxy5lnmn!3m5!1s0x94eb5b1a4fdc1f81:0xc384ecb2f0a57004!8m2!3d-23.2938529!4d-51.2075477!16s%2Fg%2F11mcx_3nqc?entry=ttu" target="_blank" rel="noopener">
-    <div class="tap-label">toque para acessar no mapa</div>
-    <div class="detail-icon">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M8 21l2-14 2 3 2-3 2 14"/><path d="M10 7a2 2 0 104 0 2 2 0 00-4 0z"/></svg>
-    </div>
-    <div class="detail-name">Recepção · Aruanã Eventos</div>
-    <div class="detail-addr">R. Geraldo Rodrigues, 376 — Cidadela, Londrina</div>
-  </a>
-
-  <a class="detail-block" href="https://noivos.casar.com/mateus-e-gabrielle-2027-04-24" target="_blank" rel="noopener">
-    <div class="tap-label">toque para acessar</div>
-    <div class="detail-icon">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="4" y="8" width="16" height="12" rx="1"/><path d="M4 8l2-4h12l2 4"/><path d="M12 8v12" stroke-width="0.8"/></svg>
-    </div>
-    <div class="detail-name">Lista de Presentes</div>
-    <div class="detail-addr">Site do casal — Casar.com</div>
-  </a>
-
-  <div class="closing-title">Te esperamos no grande dia!</div>
-  <button class="rsvp-btn" id="rsvp-btn">confirmar presença</button>
-  <div class="rsvp-msg" id="rsvp-msg"></div>
-  <div class="video-note">P.S. bora marcar a nossa videochamada pra viver isso tudo pertinho, mesmo de longe. 💚</div>
 </section>
 
 <script>
-// CONTROLE DO PREÇO / ERROS
-let currentGiftPrice = 1000;
+// ===== CONFIGURAÇÃO =====
+const WHATSAPP_PHONE = "5543999999999"; // número dos noivos (com DDI + DDD, só números)
+const START_PRICE = 1000;
+const MISTAKE_PRICE = 100;
+const FINAL_PRICE = 3000;
+
+// Modo teste: abra o link com ?teste no final para ver os botões de pular fase
+if (location.search.includes('teste')) document.body.classList.add('dev');
+
+// ===== PREÇO / ERROS =====
+let currentGiftPrice = START_PRICE;
+const fmt = n => n.toLocaleString('pt-BR');
+function updatePrices(){
+  document.querySelectorAll('.gift-price').forEach(el => el.textContent = fmt(currentGiftPrice));
+}
 function registerMistake(){
-  currentGiftPrice += 100;
-  document.querySelectorAll('.gift-price').forEach(el => el.textContent = currentGiftPrice);
+  currentGiftPrice += MISTAKE_PRICE;
+  updatePrices();
   document.querySelectorAll('.price-tag').forEach(tag => {
     tag.classList.add('bump');
     setTimeout(() => tag.classList.remove('bump'), 350);
   });
+  if (navigator.vibrate) navigator.vibrate(80);
 }
 
-// ARTE SVG DOS CANTOS
+// ===== ARTE DOS CANTOS =====
 const sprigSVG = `<g>
   <path d="M100 0 C90 40 95 80 90 130" stroke="#7fae7a" stroke-width="3" fill="none"/>
   <ellipse cx="100" cy="20" rx="14" ry="9" fill="#e8b84b" transform="rotate(20 100 20)"/>
@@ -496,25 +458,25 @@ const sprigSVG = `<g>
   <ellipse cx="60" cy="100" rx="9" ry="6" fill="#7f9bd6" transform="rotate(-10 60 100)"/>
   <ellipse cx="105" cy="115" rx="9" ry="6" fill="#c76b7a" transform="rotate(15 105 115)"/>
 </g>`;
-document.querySelectorAll('.corner').forEach(function(svg){ svg.innerHTML = sprigSVG; });
+document.querySelectorAll('.corner').forEach(svg => { svg.innerHTML = sprigSVG; });
 
 function goToStage(id){
-  document.querySelectorAll('.stage').forEach(function(s){ s.classList.remove('active'); });
+  document.querySelectorAll('.stage').forEach(s => s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
   window.scrollTo(0,0);
 }
 
-// ENVELOPE
+// ===== ENVELOPE =====
 const envelope = document.getElementById('envelope');
 function openEnvelope(){
   if(envelope.classList.contains('open')) return;
   envelope.classList.add('open');
-  setTimeout(function(){ goToStage('stage-puzzle'); initPuzzleGame(); }, 750);
+  setTimeout(() => { goToStage('stage-puzzle'); initPuzzleGame(); }, 750);
 }
 envelope.addEventListener('click', openEnvelope);
-envelope.addEventListener('keydown', function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); openEnvelope(); } });
+envelope.addEventListener('keydown', e => { if(e.key==='Enter'||e.key===' '){ e.preventDefault(); openEnvelope(); } });
 
-// FASE 1: QUEBRA-CABEÇA (16 Peças em Grid 4x4)
+// ===== FASE 1: QUEBRA-CABEÇA 4x4 =====
 const puzzleImg = 'foto_quebra_cabeca.jpeg';
 let filledPuzzleSlots = 0;
 let draggedPiece = null;
@@ -522,36 +484,30 @@ let draggedPiece = null;
 function initPuzzleGame(){
   const board = document.getElementById('puzzle-board');
   const pool = document.getElementById('puzzle-pieces');
-  const feedback = document.getElementById('puzzle-feedback');
   board.innerHTML = '';
   pool.innerHTML = '';
-  feedback.textContent = '';
+  document.getElementById('puzzle-feedback').textContent = '';
   filledPuzzleSlots = 0;
 
   for(let i=0; i<16; i++){
     const slot = document.createElement('div');
     slot.className = 'puzzle-slot';
     slot.dataset.index = i;
-    
-    slot.ondragover = (e) => { e.preventDefault(); slot.classList.add('drag-over'); };
+    slot.ondragover = e => { e.preventDefault(); slot.classList.add('drag-over'); };
     slot.ondragleave = () => slot.classList.remove('drag-over');
-    slot.ondrop = (e) => {
+    slot.ondrop = e => {
       e.preventDefault();
       slot.classList.remove('drag-over');
       if(draggedPiece) handlePieceDrop(draggedPiece, slot);
     };
-    
     board.appendChild(slot);
   }
 
-  let piecesData = [];
+  const piecesData = [];
   for(let i=0; i<16; i++){
-    const row = Math.floor(i / 4);
-    const col = i % 4;
-    piecesData.push({ id: i, bgX: -col * 60, bgY: -row * 60 });
+    piecesData.push({ id:i, bgX:-(i%4)*60, bgY:-Math.floor(i/4)*60 });
   }
-
-  piecesData.sort(() => Math.random() - 0.5);
+  shuffle(piecesData);
 
   piecesData.forEach(p => {
     const piece = document.createElement('div');
@@ -561,63 +517,43 @@ function initPuzzleGame(){
     piece.style.backgroundPosition = `${p.bgX}px ${p.bgY}px`;
     piece.dataset.id = p.id;
 
-    piece.ondragstart = (e) => {
-      draggedPiece = piece;
-      e.dataTransfer.setData('text/plain', p.id);
-    };
-
-    piece.ontouchstart = (e) => {
-      draggedPiece = piece;
-      piece.style.opacity = '0.6';
-    };
-
-    piece.ontouchmove = (e) => {
+    piece.ondragstart = e => { draggedPiece = piece; e.dataTransfer.setData('text/plain', p.id); };
+    piece.ontouchstart = () => { draggedPiece = piece; piece.style.opacity = '0.6'; };
+    piece.ontouchmove = e => {
       e.preventDefault();
-      const touch = e.touches[0];
+      const t = e.touches[0];
       piece.style.position = 'fixed';
       piece.style.zIndex = '1000';
-      piece.style.left = (touch.clientX - 30) + 'px';
-      piece.style.top = (touch.clientY - 30) + 'px';
+      piece.style.pointerEvents = 'none';
+      piece.style.left = (t.clientX - 30) + 'px';
+      piece.style.top = (t.clientY - 30) + 'px';
     };
-
-    piece.ontouchend = (e) => {
+    piece.ontouchend = e => {
       piece.style.opacity = '1';
       piece.style.position = 'static';
       piece.style.zIndex = 'auto';
-
-      const touch = e.changedTouches[0];
-      const targetElement = document.elementFromPoint(touch.clientX, touch.clientY);
-      const slot = targetElement ? targetElement.closest('.puzzle-slot') : null;
-
-      if(slot) {
-        handlePieceDrop(piece, slot);
-      } else {
-        draggedPiece = null;
-      }
+      piece.style.pointerEvents = '';
+      const t = e.changedTouches[0];
+      const el = document.elementFromPoint(t.clientX, t.clientY);
+      const slot = el ? el.closest('.puzzle-slot') : null;
+      if(slot) handlePieceDrop(piece, slot); else draggedPiece = null;
     };
-
     pool.appendChild(piece);
   });
 }
 
 function handlePieceDrop(piece, slot){
   if(slot.children.length > 0) return;
-
-  const targetIdx = slot.dataset.index;
-  const pieceId = piece.dataset.id;
-
-  if(parseInt(pieceId) === parseInt(targetIdx)){
+  if(parseInt(piece.dataset.id) === parseInt(slot.dataset.index)){
     piece.draggable = false;
-    piece.ontouchstart = null;
-    piece.ontouchmove = null;
-    piece.ontouchend = null;
+    piece.ontouchstart = piece.ontouchmove = piece.ontouchend = null;
     slot.appendChild(piece);
     draggedPiece = null;
     filledPuzzleSlots++;
-
+    document.getElementById('puzzle-feedback').textContent = '';
     if(filledPuzzleSlots === 16){
       document.getElementById('puzzle-feedback').textContent = 'Foto completa! Indo pra fase 2...';
-      setTimeout(() => { goToStage('stage-1'); initRingGame(); }, 1200);
+      setTimeout(() => { goToStage('stage-memory'); initMemoryGame(); }, 1400);
     }
   } else {
     registerMistake();
@@ -626,39 +562,15 @@ function handlePieceDrop(piece, slot){
   }
 }
 
-// FASE 2: ALIANÇA ESCONDIDA
-const flowerIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="5" r="3"/><circle cx="12" cy="19" r="3"/><circle cx="5" cy="12" r="3"/><circle cx="19" cy="12" r="3"/></svg>';
-const ringIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="14" r="7"/><path d="M9 7l3-4 3 4"/></svg>';
-
-function initRingGame(){
-  const grid = document.getElementById('ring-grid');
-  const feedback = document.getElementById('ring-feedback');
-  grid.innerHTML = '';
-  feedback.textContent = '';
-  const correctIndex = Math.floor(Math.random()*9);
-  for(let i=0;i<9;i++){
-    const tile = document.createElement('div');
-    tile.className = 'ring-tile';
-    tile.innerHTML = flowerIcon;
-    tile.addEventListener('click', function(){
-      if(tile.classList.contains('found')) return;
-      if(i === correctIndex){
-        tile.classList.add('found');
-        tile.innerHTML = ringIcon;
-        feedback.textContent = 'Encontrou! Indo pra fase 3...';
-        setTimeout(function(){ goToStage('stage-2'); initMemoryGame(); }, 1100);
-      } else {
-        tile.classList.add('miss');
-        registerMistake();
-        feedback.textContent = 'Não é essa! (+R$ 100 no presente)';
-        setTimeout(function(){ tile.classList.remove('miss'); }, 350);
-      }
-    });
-    grid.appendChild(tile);
+function shuffle(arr){
+  for(let i=arr.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [arr[i],arr[j]] = [arr[j],arr[i]];
   }
+  return arr;
 }
 
-// FASE 3: MEMÓRIA COM 12 CARTAS
+// ===== FASE 2: MEMÓRIA =====
 function initMemoryGame(){
   const grid = document.getElementById('memory-grid');
   const feedback = document.getElementById('memory-feedback');
@@ -670,303 +582,331 @@ function initMemoryGame(){
     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M8 21l2-14 2 3 2-3 2 14"/><path d="M10 7a2 2 0 104 0 2 2 0 00-4 0z"/></svg>',
     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M12 2l2.5 6.5L21 9l-5 4.5L17.5 21 12 17l-5.5 4L8 13.5 3 9l6.5-.5z"/></svg>',
     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="12" cy="12" r="9"/><path d="M12 7v10M7 12h10"/></svg>',
-    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M4 12h16M12 4v16"/></svg>'
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M4 21V9l8-5 8 5v12"/><path d="M9 21v-6h6v6"/></svg>'
   ];
-  let deck = icons.concat(icons);
-  for(let i=deck.length-1;i>0;i--){
-    const j = Math.floor(Math.random()*(i+1));
-    [deck[i],deck[j]] = [deck[j],deck[i]];
-  }
-  let flipped = [];
-  let matches = 0;
-  let lock = false;
-  deck.forEach(function(icon, idx){
+  const deck = shuffle(icons.concat(icons));
+  let flipped = [], matches = 0, lock = false;
+  deck.forEach(icon => {
     const card = document.createElement('div');
     card.className = 'mem-card';
     card.innerHTML = '<div class="mem-inner"><div class="mem-face mem-back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M12 2l2.5 6.5L21 9l-5 4.5L17.5 21 12 17l-5.5 4L8 13.5 3 9l6.5-.5z"/></svg></div><div class="mem-face mem-front">'+icon+'</div></div>';
     card.dataset.icon = icon;
-    card.addEventListener('click', function(){
-      if(lock || card.classList.contains('flip') || card.classList.contains('matched')) return;
+    card.addEventListener('click', () => {
+      if(lock || card.classList.contains('flip')) return;
       card.classList.add('flip');
       flipped.push(card);
-      if(flipped.length === 2){
-        lock = true;
-        const [a,b] = flipped;
-        if(a.dataset.icon === b.dataset.icon){
-          a.classList.add('matched'); b.classList.add('matched');
-          matches++;
-          flipped = [];
-          lock = false;
-          if(matches === icons.length){
-            feedback.textContent = 'Incrível! Todos os pares encontrados. Indo pra fase 4...';
-            setTimeout(function(){ goToStage('stage-3'); initGeniusGame(); }, 1100);
-          }
-        } else {
-          registerMistake();
-          feedback.textContent = 'Par incorreto (+R$ 100 no presente)';
-          setTimeout(function(){
-            a.classList.remove('flip'); b.classList.remove('flip');
-            flipped = []; lock = false;
-          }, 750);
+      if(flipped.length < 2) return;
+      lock = true;
+      const [a,b] = flipped;
+      if(a.dataset.icon === b.dataset.icon){
+        a.classList.add('matched'); b.classList.add('matched');
+        matches++; flipped = []; lock = false;
+        feedback.textContent = 'Par encontrado!';
+        if(matches === icons.length){
+          feedback.textContent = 'Todos os pares! Agora a última fase...';
+          setTimeout(() => { goToStage('stage-words'); initWordSearch(); }, 1300);
         }
+      } else {
+        registerMistake();
+        feedback.textContent = 'Par errado (+R$ 100 no presente)';
+        setTimeout(() => {
+          a.classList.remove('flip'); b.classList.remove('flip');
+          flipped = []; lock = false;
+        }, 750);
       }
     });
     grid.appendChild(card);
   });
 }
 
-// SINTETIZADOR DE ÁUDIO WEB (SEM ARQUIVOS EXTERNOS)
-const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-const noteFrequencies = [261.63, 329.63, 392.00, 493.88]; // Dó, Mi, Sol, Si (Teclado)
-
-function playAudioTone(colorIndex) {
-  if (audioCtx.state === 'suspended') {
-    audioCtx.resume();
-  }
-  const osc = audioCtx.createOscillator();
-  const gain = audioCtx.createGain();
-  
-  osc.type = 'triangle'; // Som suave estilo teclado musical
-  osc.frequency.setValueAtTime(noteFrequencies[colorIndex], audioCtx.currentTime);
-  
-  gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
-  gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.5);
-  
-  osc.connect(gain);
-  gain.connect(audioCtx.destination);
-  
-  osc.start();
-  osc.stop(audioCtx.currentTime + 0.5);
-}
-
-// FASE 4: JOGO GENIUS (Sintetizador Musical + Sequência Mais Difícil: 5 Notas)
-let geniusSequence = [];
-let geniusPlayerStep = 0;
-let geniusCanPlay = false;
-
-function initGeniusGame(){
-  // Gera 5 notas aleatórias para aumentar a dificuldade
-  geniusSequence = [
-    Math.floor(Math.random()*4), 
-    Math.floor(Math.random()*4), 
-    Math.floor(Math.random()*4),
-    Math.floor(Math.random()*4),
-    Math.floor(Math.random()*4)
-  ];
-  geniusPlayerStep = 0;
-  geniusCanPlay = false;
-  document.getElementById('genius-feedback').textContent = 'Clique em "Ouvir Sequência 🎵"';
-  document.getElementById('genius-start-btn').style.display = 'inline-block';
-  
-  document.querySelectorAll('.genius-btn').forEach(btn => {
-    btn.onclick = () => {
-      if(!geniusCanPlay) return;
-      const color = parseInt(btn.dataset.color);
-      lightGeniusBtn(color);
-      if(color === geniusSequence[geniusPlayerStep]){
-        geniusPlayerStep++;
-        if(geniusPlayerStep === geniusSequence.length){
-          geniusCanPlay = false;
-          document.getElementById('genius-feedback').textContent = 'Perfeito! Melodia dominada. Indo pra fase 5...';
-          setTimeout(() => { goToStage('stage-4'); initWordSearch(); }, 1200);
-        }
-      } else {
-        geniusCanPlay = false;
-        registerMistake();
-        document.getElementById('genius-feedback').textContent = 'Nota errada (+R$ 100)! Preste atenção no som.';
-        document.getElementById('genius-start-btn').style.display = 'inline-block';
-      }
-    };
-  });
-}
-
-function lightGeniusBtn(index){
-  const btns = document.querySelectorAll('.genius-btn');
-  btns[index].classList.add('lit');
-  playAudioTone(index); // Toca o som da nota ao acender/clicar
-  setTimeout(() => btns[index].classList.remove('lit'), 350);
-}
-
-function playGeniusSequence(){
-  document.getElementById('genius-start-btn').style.display = 'none';
-  document.getElementById('genius-feedback').textContent = 'Escute a melodia atentamente...';
-  geniusPlayerStep = 0;
-  geniusCanPlay = false;
-  
-  geniusSequence.forEach((colorIdx, i) => {
-    setTimeout(() => {
-      lightGeniusBtn(colorIdx);
-      if(i === geniusSequence.length - 1){
-        setTimeout(() => {
-          geniusCanPlay = true;
-          document.getElementById('genius-feedback').textContent = 'Sua vez! Toque a mesma melodia.';
-        }, 500);
-      }
-    }, (i + 1) * 550);
-  });
-}
-
-// FASE 5: CAÇA PALAVRAS COM TEMPORIZADOR
-const wordMatrix = [
-  ['A','M','O','R','X','F'],
-  ['P','L','Z','K','O','E'],
-  ['U','N','I','A','O','M'],
-  ['B','D','W','Q','R','C'],
-  ['L','J','H','G','S','A']
+// ===== FASE 3: CAÇA-PALAVRAS =====
+// Frase: VOCÊS ACEITAM SER NOSSOS PADRINHOS?
+const PHRASE = [
+  { word:'VOCES',     label:'VOCÊS' },
+  { word:'ACEITAM',   label:'ACEITAM' },
+  { word:'SER',       label:'SER' },
+  { word:'NOSSOS',    label:'NOSSOS' },
+  { word:'PADRINHOS', label:'PADRINHOS' }
 ];
-let wordsToFind = ['AMOR', 'UNIAO', 'FE'];
+const GRID_SIZE = 9;
+// posição de cada palavra: linha, coluna, direção [dLinha, dColuna]
+const PLACEMENTS = {
+  VOCES:     { r:2, c:1, d:[0,1] },   // horizontal
+  NOSSOS:    { r:1, c:2, d:[1,0] },   // vertical, cruza o "O" de VOCÊS
+  SER:       { r:2, c:5, d:[1,0] },   // vertical, começa no "S" de VOCÊS
+  ACEITAM:   { r:0, c:8, d:[1,0] },   // vertical, lado direito
+  PADRINHOS: { r:8, c:0, d:[0,1] }    // horizontal, embaixo
+};
+const FILLER = 'ABCDEFGILMNOPRSTUV';
+
+let wordMatrix = [];
 let foundWords = [];
-let selectedCells = [];
-let wordTimer = null;
-let wordTimeLeft = 15;
+let wordsDone = false;
+
+function buildWordMatrix(){
+  wordMatrix = Array.from({length:GRID_SIZE}, () => Array(GRID_SIZE).fill(null));
+  Object.entries(PLACEMENTS).forEach(([word, p]) => {
+    [...word].forEach((ch, i) => {
+      const r = p.r + p.d[0]*i, c = p.c + p.d[1]*i;
+      if(wordMatrix[r][c] && wordMatrix[r][c] !== ch) console.warn('Conflito no caça-palavras', word, r, c);
+      wordMatrix[r][c] = ch;
+    });
+  });
+  for(let r=0;r<GRID_SIZE;r++) for(let c=0;c<GRID_SIZE;c++)
+    if(!wordMatrix[r][c]) wordMatrix[r][c] = FILLER[Math.floor(Math.random()*FILLER.length)];
+}
+
+function renderPhrase(){
+  const box = document.getElementById('phrase');
+  box.innerHTML = '';
+  PHRASE.forEach(({word, label}) => {
+    const w = document.createElement('div');
+    w.className = 'phrase-word' + (foundWords.includes(word) ? ' found' : '');
+    [...label].forEach((ch, i) => {
+      const l = document.createElement('span');
+      l.className = 'phrase-letter';
+      if(foundWords.includes(word)) l.textContent = ch;
+      else if(i === 0){ l.textContent = ch; l.classList.add('hint'); }
+      w.appendChild(l);
+    });
+    box.appendChild(w);
+  });
+  const q = document.createElement('span');
+  q.className = 'phrase-q';
+  q.textContent = '?';
+  box.lastChild.appendChild(q);
+}
+
+let selStart = null;     // célula onde o dedo encostou
+let anchor = null;       // primeira letra escolhida no modo "toque"
+let selecting = false;
+let moved = false;
+
+function cellAt(x, y){
+  const el = document.elementFromPoint(x, y);
+  return el && el.classList.contains('word-cell') ? el : null;
+}
+function lineCells(a, b){
+  const r1=+a.dataset.r, c1=+a.dataset.c, r2=+b.dataset.r, c2=+b.dataset.c;
+  const dr=Math.sign(r2-r1), dc=Math.sign(c2-c1);
+  const len=Math.max(Math.abs(r2-r1), Math.abs(c2-c1));
+  if(!(r1===r2 || c1===c2 || Math.abs(r2-r1)===Math.abs(c2-c1))) return null;
+  const grid = document.getElementById('word-grid');
+  const cells = [];
+  for(let i=0;i<=len;i++) cells.push(grid.children[(r1+dr*i)*GRID_SIZE + (c1+dc*i)]);
+  return cells;
+}
+function clearSelection(){
+  document.querySelectorAll('.word-cell.selected, .word-cell.anchor').forEach(c => c.classList.remove('selected','anchor'));
+}
+function highlight(cells){
+  document.querySelectorAll('.word-cell.selected').forEach(c => c.classList.remove('selected'));
+  if(cells) cells.forEach(c => c.classList.add('selected'));
+}
 
 function initWordSearch(){
-  const grid = document.getElementById('word-grid');
-  const feedback = document.getElementById('word-feedback');
-  grid.innerHTML = '';
-  feedback.textContent = '';
   foundWords = [];
-  selectedCells = [];
-  
-  wordsToFind.forEach(w => document.getElementById('target-' + w).classList.remove('found'));
-
-  for(let r=0; r<5; r++){
-    for(let c=0; c<6; c++){
+  wordsDone = false;
+  selStart = anchor = null;
+  buildWordMatrix();
+  renderPhrase();
+  document.getElementById('word-feedback').textContent = '';
+  document.getElementById('reveal-question').classList.remove('show');
+  document.getElementById('words-continue').classList.remove('show');
+  const grid = document.getElementById('word-grid');
+  grid.style.display = '';
+  grid.innerHTML = '';
+  for(let r=0;r<GRID_SIZE;r++){
+    for(let c=0;c<GRID_SIZE;c++){
       const cell = document.createElement('div');
       cell.className = 'word-cell';
       cell.textContent = wordMatrix[r][c];
-      cell.dataset.row = r;
-      cell.dataset.col = c;
-      cell.onclick = () => toggleWordCell(cell);
+      cell.dataset.r = r; cell.dataset.c = c;
       grid.appendChild(cell);
     }
   }
 
-  // Temporizador
-  clearInterval(wordTimer);
-  wordTimeLeft = 15;
-  document.getElementById('word-timer-count').textContent = wordTimeLeft;
-  
-  wordTimer = setInterval(() => {
-    wordTimeLeft--;
-    document.getElementById('word-timer-count').textContent = wordTimeLeft;
-    if(wordTimeLeft <= 0){
-      clearInterval(wordTimer);
-      registerMistake();
-      document.getElementById('word-feedback').textContent = 'Tempo esgotado! (+R$ 100). Reiniciando...';
-      setTimeout(() => initWordSearch(), 1200);
+  grid.onpointerdown = e => {
+    if(wordsDone) return;
+    const cell = cellAt(e.clientX, e.clientY);
+    if(!cell) return;
+    e.preventDefault();
+    selecting = true; moved = false; selStart = cell;
+    if(!anchor) highlight([cell]);
+  };
+  grid.onpointermove = e => {
+    if(!selecting) return;
+    const cell = cellAt(e.clientX, e.clientY);
+    if(!cell || cell === selStart && !moved) return;
+    moved = true;
+    if(anchor){ anchor.classList.remove('anchor'); anchor = null; }
+    highlight(lineCells(selStart, cell) || [selStart]);
+  };
+  const finish = e => {
+    if(!selecting) return;
+    selecting = false;
+    const cell = cellAt(e.clientX, e.clientY) || selStart;
+    if(!moved){
+      // modo toque: 1º toque marca a primeira letra, 2º toque a última
+      if(!anchor){ anchor = cell; highlight([]); cell.classList.add('anchor'); return; }
+      if(anchor === cell){ clearSelection(); anchor = null; return; }
+      const cells = lineCells(anchor, cell);
+      anchor.classList.remove('anchor'); anchor = null;
+      checkSelection(cells);
+      return;
     }
-  }, 1000);
+    checkSelection(lineCells(selStart, cell));
+  };
+  grid.onpointerup = finish;
+  grid.onpointercancel = () => { selecting = false; clearSelection(); };
 }
 
-function toggleWordCell(cell){
-  if(cell.classList.contains('found-cell')) return;
-  
-  if(cell.classList.contains('selected')){
-    cell.classList.remove('selected');
-    selectedCells = selectedCells.filter(c => c !== cell);
+function checkSelection(cells){
+  const feedback = document.getElementById('word-feedback');
+  if(!cells || cells.length < 2){
+    clearSelection();
+    feedback.textContent = 'As palavras ficam em linha reta (horizontal, vertical ou diagonal).';
+    return;
+  }
+  const text = cells.map(c => c.textContent).join('');
+  const rev = [...text].reverse().join('');
+  const hit = PHRASE.find(p => !foundWords.includes(p.word) && (p.word === text || p.word === rev));
+  if(hit){
+    foundWords.push(hit.word);
+    cells.forEach(c => { c.classList.remove('selected'); c.classList.add('found-cell'); });
+    renderPhrase();
+    feedback.textContent = `"${hit.label}" encontrada!`;
+    if(foundWords.length === PHRASE.length) finishWordSearch();
+  } else if(PHRASE.some(p => p.word === text || p.word === rev)){
+    clearSelection();
+    feedback.textContent = 'Essa vocês já acharam!';
   } else {
-    cell.classList.add('selected');
-    selectedCells.push(cell);
-  }
-  
-  const currentWord = selectedCells.map(c => c.textContent).join('');
-  
-  wordsToFind.forEach(word => {
-    if(!foundWords.includes(word) && currentWord === word){
-      foundWords.push(word);
-      document.getElementById('target-' + word).classList.add('found');
-      selectedCells.forEach(c => {
-        c.classList.remove('selected');
-        c.classList.add('found-cell');
-      });
-      selectedCells = [];
-      document.getElementById('word-feedback').textContent = `Palavra "${word}" encontrada!`;
-      
-      if(foundWords.length === wordsToFind.length){
-        clearInterval(wordTimer);
-        document.getElementById('word-feedback').textContent = 'Excelente! Indo pra última fase...';
-        setTimeout(() => { goToStage('stage-5'); initQuiz(); }, 1100);
-      }
-    }
-  });
-
-  if(currentWord.length >= 5 && !wordsToFind.includes(currentWord)){
+    cells.forEach(c => c.classList.add('bad'));
     registerMistake();
-    document.getElementById('word-feedback').textContent = 'Palavra incorreta (+R$ 100)! Tente limpar a seleção.';
-    setTimeout(() => {
-      selectedCells.forEach(c => c.classList.remove('selected'));
-      selectedCells = [];
-    }, 600);
+    feedback.textContent = 'Não é essa palavra (+R$ 100 no presente)';
+    setTimeout(() => cells.forEach(c => c.classList.remove('bad','selected')), 500);
   }
 }
 
-// FASE 6: QUIZ
-function initQuiz(){
-  const opts = document.querySelectorAll('.quiz-opt');
-  const feedback = document.getElementById('quiz-feedback');
-  const continueBtn = document.getElementById('quiz-continue');
-  feedback.textContent = '';
-  continueBtn.classList.remove('show');
-  opts.forEach(function(opt){
-    opt.classList.remove('wrong','correct');
-    opt.disabled = false;
-    opt.onclick = function(){
-      if(opt.dataset.correct === 'true'){
-        opt.classList.add('correct');
-        feedback.textContent = 'Isso mesmo!';
-        opts.forEach(function(o){ o.disabled = true; });
-        continueBtn.classList.add('show');
-      } else {
-        opt.classList.add('wrong');
-        registerMistake();
-        feedback.textContent = 'Ops! Não é essa (+R$ 100 no presente).';
-        setTimeout(function(){ opt.classList.remove('wrong'); }, 400);
-      }
-    };
-  });
+function finishWordSearch(){
+  wordsDone = true;
+  foundWords = PHRASE.map(p => p.word);
+  renderPhrase();
+  document.getElementById('word-feedback').textContent = '';
+  setTimeout(() => {
+    document.getElementById('word-grid').style.display = 'none';
+    document.getElementById('phrase').innerHTML = '';
+    document.getElementById('words-desc').textContent = 'Vocês descobriram a nossa pergunta...';
+    document.getElementById('reveal-question').classList.add('show');
+    document.getElementById('words-continue').classList.add('show');
+    launchConfetti();
+  }, 900);
 }
 
-document.getElementById('quiz-continue').addEventListener('click', function(){
-  goToStage('stage-final');
-  launchConfetti();
+// ===== "SISTEMA" DE CÁLCULO DO PRESENTE =====
+function startCalc(){
+  goToStage('stage-calc');
+  const valueEl = document.getElementById('calc-value');
+  const log = document.getElementById('calc-log');
+  const btn = document.getElementById('calc-continue');
+  btn.classList.remove('show');
+  log.innerHTML = '';
+  valueEl.classList.remove('glitch');
+  const errors = Math.round((currentGiftPrice - START_PRICE) / MISTAKE_PRICE);
+  const addLine = (html, cls) => {
+    const d = document.createElement('div');
+    if(cls) d.className = cls;
+    d.innerHTML = '&gt; ' + html;
+    log.appendChild(d);
+  };
+
+  // conta de 0 até o valor atual
+  const target = currentGiftPrice;
+  let shown = 0;
+  const step = Math.max(50, Math.round(target/40));
+  const counter = setInterval(() => {
+    shown = Math.min(target, shown + step);
+    valueEl.textContent = 'R$ ' + fmt(shown) + ',00';
+    if(shown >= target) clearInterval(counter);
+  }, 30);
+
+  const t = [];
+  t.push([700,  () => addLine('valor base: R$ ' + fmt(START_PRICE) + ',00')]);
+  t.push([1400, () => addLine(errors + ' erro' + (errors===1?'':'s') + ' × R$ 100 = R$ ' + fmt(errors*MISTAKE_PRICE) + ',00')]);
+  t.push([2100, () => addLine('total: R$ ' + fmt(target) + ',00')]);
+
+  if(target >= FINAL_PRICE){
+    t.push([3000, () => { addLine('uau... vocês erraram bastante, hein? 😂', 'ok'); btn.textContent = 'ver convite 💚'; btn.classList.add('show'); }]);
+  } else {
+    t.push([2900, () => { addLine('ERRO 0x3000: falha no sistema', 'err'); valueEl.classList.add('glitch'); document.getElementById('stage-calc').classList.add('shake-screen'); }]);
+    t.push([3300, () => {
+      const g = setInterval(() => { valueEl.textContent = 'R$ ' + Math.floor(Math.random()*99999) + ',??'; }, 70);
+      setTimeout(() => clearInterval(g), 1600);
+    }]);
+    t.push([3700, () => addLine('valor corrompido... recalculando', 'err')]);
+    t.push([4600, () => addLine('aplicando correção automática', 'err')]);
+    t.push([5100, () => {
+      document.getElementById('stage-calc').classList.remove('shake-screen');
+      currentGiftPrice = FINAL_PRICE;
+      updatePrices();
+      valueEl.classList.remove('glitch');
+      valueEl.textContent = 'R$ ' + fmt(FINAL_PRICE) + ',00';
+      addLine('valor final ajustado: R$ ' + fmt(FINAL_PRICE) + ',00', 'ok');
+    }]);
+    t.push([5900, () => { addLine('o sistema não aceita reclamações 😇', 'ok'); btn.textContent = 'ok, sem reclamações 😇'; btn.classList.add('show'); }]);
+  }
+  t.forEach(([ms, fn]) => setTimeout(fn, ms));
+}
+
+// ===== RESPOSTA FINAL =====
+const noBtn = document.getElementById('no-btn');
+const noMsgs = ['tem certeza?', 'resposta inválida', 'esse botão está com defeito', 'tenta o outro 😅', 'não é uma opção!'];
+let noTries = 0;
+function runAway(e){
+  if(e) e.preventDefault();
+  const msg = document.getElementById('answer-msg');
+  msg.textContent = noMsgs[noTries % noMsgs.length];
+  noTries++;
+  noBtn.classList.add('run');
+  const pad = 20;
+  const w = noBtn.offsetWidth, h = noBtn.offsetHeight;
+  noBtn.style.left = (pad + Math.random()*(window.innerWidth - w - pad*2)) + 'px';
+  noBtn.style.top = (pad + Math.random()*(window.innerHeight - h - pad*2)) + 'px';
+  if(noTries >= 6){ noBtn.style.display = 'none'; msg.textContent = 'o botão "não" desistiu. só sobrou uma opção 😄'; }
+}
+noBtn.addEventListener('pointerenter', e => { if(e.pointerType === 'mouse') runAway(e); });
+noBtn.addEventListener('click', runAway);
+
+document.getElementById('yes-btn').addEventListener('click', function(){
+  noBtn.style.display = 'none';
+  this.textContent = 'aceitaram! 💍';
+  this.disabled = true;
+  document.getElementById('answer-msg').textContent = 'Que alegria!! Vocês não fazem ideia do quanto isso significa pra gente. 💚';
+  document.getElementById('after-yes').classList.add('show');
+  launchConfetti(); setTimeout(launchConfetti, 600);
+  const message = encodeURIComponent(`Mateus e Gabrielle, ACEITAMOS ser padrinhos de vocês! 💍 (e o presente ficou em R$ ${fmt(currentGiftPrice)},00 😂)`);
+  document.getElementById('wpp-btn').href = `https://wa.me/${WHATSAPP_PHONE}?text=${message}`;
 });
 
-// EFEITO DE CONFETIS
+// ===== CONFETE =====
 function launchConfetti(){
-  const colors = ['#e8c877','#c9a24a','#ffffff','#a79bd1','#7f9bd6'];
-  for(let i=0;i<50;i++){
+  const colors = ['#e8c877','#c9a24a','#ffffff','#a79bd1','#7f9bd6','#c76b7a'];
+  for(let i=0;i<60;i++){
     const piece = document.createElement('div');
     piece.className = 'confetti';
     piece.style.left = Math.random()*100+'vw';
     piece.style.background = colors[Math.floor(Math.random()*colors.length)];
-    piece.style.transform = 'rotate('+Math.random()*360+'deg)';
+    const rot = 'rotate('+Math.random()*360+'deg)';
     document.body.appendChild(piece);
     const duration = 2200 + Math.random()*1500;
     const drift = (Math.random()-0.5)*200;
     piece.animate([
-      { transform: piece.style.transform + ' translate(0,0)', opacity:1 },
-      { transform: piece.style.transform + ' translate('+drift+'px, 100vh)', opacity:0.8 }
-    ], { duration: duration, easing:'ease-in' });
-    setTimeout(function(){ piece.remove(); }, duration);
+      { transform: rot + ' translate(0,0)', opacity:1 },
+      { transform: rot + ' translate('+drift+'px, 100vh)', opacity:0.8 }
+    ], { duration, easing:'ease-in' });
+    setTimeout(() => piece.remove(), duration);
   }
 }
-
-// RSVP BOTÃO (COM WHATSAPP INTEGRADO)
-const rsvpBtn = document.getElementById('rsvp-btn');
-const rsvpMsg = document.getElementById('rsvp-msg');
-rsvpBtn.addEventListener('click', function(){
-  rsvpMsg.textContent = 'Presença confirmada! Redirecionando para o WhatsApp... 💚';
-  rsvpBtn.textContent = 'presença confirmada ✓';
-  rsvpBtn.disabled = true;
-  launchConfetti();
-
-  const phone = "5543999999999"; // Coloque o numero dos noivos aqui
-  const message = encodeURIComponent(`Olá! Consegui desbloquear o convite! O valor final do meu presente ficou em R$ ${currentGiftPrice},00. Confirmo minha presença no casamento!`);
-  setTimeout(() => {
-    window.open(`https://wa.me/${phone}?text=${message}`, '_blank');
-  }, 1200);
-});
 </script>
 </body>
 </html>
